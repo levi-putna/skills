@@ -36,34 +36,30 @@ Install all three for the full design-to-ship flow.
 
 ## Install
 
-Requires [agent-kit](https://github.com/levi-putna/agent-kit):
-
-```sh
-npm install -g @levi-putna/agent-kit
-```
+Uses [@levi-putna/agent-kit](https://github.com/levi-putna/agent-kit) via `npx` — no global install required.
 
 ### Quick install
 
 ```sh
-agent-kit add levi-putna/skills --skill brainstorming
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming
 ```
 
 ### Global — Cursor
 
 ```sh
-agent-kit add levi-putna/skills --skill brainstorming --global --agent cursor
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming --global --agent cursor
 ```
 
 ### Global — Claude
 
 ```sh
-agent-kit add levi-putna/skills --skill brainstorming --global --agent claude
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming --global --agent claude
 ```
 
 ### Project install
 
 ```sh
-agent-kit add levi-putna/skills --skill brainstorming --project
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming --project
 ```
 
 ## Example prompt
@@ -73,5 +69,5 @@ agent-kit add levi-putna/skills --skill brainstorming --project
 ## Uninstall
 
 ```sh
-agent-kit remove brainstorming
+npx @levi-putna/agent-kit@latest remove brainstorming
 ```

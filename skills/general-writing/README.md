@@ -29,18 +29,14 @@ Good fits:
 
 ## Install
 
-Requires [agent-kit](https://github.com/levi-putna/agent-kit):
-
-```sh
-npm install -g @levi-putna/agent-kit
-```
+Uses [@levi-putna/agent-kit](https://github.com/levi-putna/agent-kit) via `npx` — no global install required.
 
 ### Global install
 
 Available across all projects via Claude Code and the Claude desktop app:
 
 ```sh
-agent-kit add levi-putna/skills --skill general-writing --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill general-writing --global
 ```
 
 Skills are written to `~/.claude/skills/`.
@@ -50,7 +46,7 @@ Skills are written to `~/.claude/skills/`.
 Install into the current project for detected agents (Cursor, Claude Code, Windsurf, etc.):
 
 ```sh
-agent-kit add levi-putna/skills --skill general-writing --project
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill general-writing --project
 ```
 
 Skills are written to `.agents/skills/` with symlinks from each agent directory. An `agent-kit-lock.json` is created so teammates can reproduce the setup.
@@ -60,19 +56,13 @@ Skills are written to `.agents/skills/` with symlinks from each agent directory.
 Pick skills from a list instead of specifying the name:
 
 ```sh
-agent-kit add levi-putna/skills
+npx @levi-putna/agent-kit@latest add levi-putna/skills
 ```
 
 ### Install from a specific branch
 
 ```sh
-agent-kit add levi-putna/skills@develop --skill general-writing
-```
-
-### Run without installing agent-kit globally
-
-```sh
-npx @levi-putna/agent-kit add levi-putna/skills --skill general-writing --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills@develop --skill general-writing
 ```
 
 ### Manual install
@@ -101,5 +91,5 @@ Copy the entire `general-writing` folder including `SKILL.md`.
 ## Uninstall
 
 ```sh
-agent-kit remove general-writing
+npx @levi-putna/agent-kit@latest remove general-writing
 ```

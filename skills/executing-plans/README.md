@@ -27,34 +27,30 @@ brainstorming → planning → executing-plans
 
 ## Install
 
-Requires [agent-kit](https://github.com/levi-putna/agent-kit):
-
-```sh
-npm install -g @levi-putna/agent-kit
-```
+Uses [@levi-putna/agent-kit](https://github.com/levi-putna/agent-kit) via `npx` — no global install required.
 
 ### Quick install
 
 ```sh
-agent-kit add levi-putna/skills --skill executing-plans
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans
 ```
 
 ### Global — Cursor
 
 ```sh
-agent-kit add levi-putna/skills --skill executing-plans --global --agent cursor
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans --global --agent cursor
 ```
 
 ### Global — Claude
 
 ```sh
-agent-kit add levi-putna/skills --skill executing-plans --global --agent claude
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans --global --agent claude
 ```
 
 ### Project install
 
 ```sh
-agent-kit add levi-putna/skills --skill executing-plans --project
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans --project
 ```
 
 ## Example prompt
@@ -64,5 +60,5 @@ agent-kit add levi-putna/skills --skill executing-plans --project
 ## Uninstall
 
 ```sh
-agent-kit remove executing-plans
+npx @levi-putna/agent-kit@latest remove executing-plans
 ```

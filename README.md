@@ -4,16 +4,10 @@ A collection of agent skills developed by [Levi Putna](https://github.com/levi-p
 
 [![GitHub](https://img.shields.io/github/stars/levi-putna/skills?style=social)](https://github.com/levi-putna/skills)
 
-Skills are installed with [agent-kit](https://github.com/levi-putna/agent-kit). Install it once:
+Skills are installed with [@levi-putna/agent-kit](https://github.com/levi-putna/agent-kit). Browse everything in this repo:
 
 ```sh
-npm install -g @levi-putna/agent-kit
-```
-
-Browse everything in this repo:
-
-```sh
-agent-kit list levi-putna/skills
+npx @levi-putna/agent-kit@latest list levi-putna/skills
 ```
 
 ---
@@ -22,25 +16,25 @@ agent-kit list levi-putna/skills
 
 | Skill | Purpose | Install |
 |---|---|---|
-| [general-writing](./skills/general-writing/) | Rewrite or draft text in clear, natural language. Strips AI clichés, filler, and overly formal phrasing. | `agent-kit add levi-putna/skills --skill general-writing` |
-| [brainstorming](./skills/brainstorming/) | Think through ideas with a trusted colleague before building. Writes design specs. | `agent-kit add levi-putna/skills --skill brainstorming` |
-| [planning](./skills/planning/) | Turn an approved design into a TDD implementation plan with exact tasks. | `agent-kit add levi-putna/skills --skill planning` |
-| [executing-plans](./skills/executing-plans/) | Execute a plan task-by-task with verification and review checkpoints. | `agent-kit add levi-putna/skills --skill executing-plans` |
+| [general-writing](./skills/general-writing/) | Rewrite or draft text in clear, natural language. Strips AI clichés, filler, and overly formal phrasing. | [Install guide](./skills/general-writing/README.md#install) |
+| [brainstorming](./skills/brainstorming/) | Think through ideas with a trusted colleague before building. Writes design specs. | [Install guide](./skills/brainstorming/README.md#install) |
+| [planning](./skills/planning/) | Turn an approved design into a TDD implementation plan with exact tasks. | [Install guide](./skills/planning/README.md#install) |
+| [executing-plans](./skills/executing-plans/) | Execute a plan task-by-task with verification and review checkpoints. | [Install guide](./skills/executing-plans/README.md#install) |
 
 ### Design-to-ship workflow
 
 Install all three for structured feature work (interactive picker):
 
 ```sh
-agent-kit add levi-putna/skills --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --global
 ```
 
 Or install individually:
 
 ```sh
-agent-kit add levi-putna/skills --skill brainstorming --global
-agent-kit add levi-putna/skills --skill planning --global
-agent-kit add levi-putna/skills --skill executing-plans --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill planning --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans --global
 ```
 
 ---
@@ -106,11 +100,11 @@ Human-readable documentation for the skill. Covers purpose, usage examples, and 
 
 ### Supporting files
 
-You can include scripts, templates, or config files alongside `SKILL.md` in the skill folder. agent-kit installs all top-level files in the folder when a skill is added. Nested subdirectories are not fetched.
+You can include scripts, templates, or config files alongside `SKILL.md` in the skill folder. `@levi-putna/agent-kit` installs all top-level files in the folder when a skill is added. Nested subdirectories are not fetched.
 
 ### What gets installed
 
-When someone runs `agent-kit add levi-putna/skills --skill my-skill`, every file in `skills/my-skill/` is copied to the agent's skills directory — typically `~/.claude/skills/my-skill/` (global) or `.agents/skills/my-skill/` (project). The agent reads `SKILL.md`; other files are available as reference or for scripts the skill invokes.
+When someone runs `npx @levi-putna/agent-kit@latest add levi-putna/skills --skill my-skill`, every file in `skills/my-skill/` is copied to the agent's skills directory — typically `~/.claude/skills/my-skill/` (global) or `.agents/skills/my-skill/` (project). The agent reads `SKILL.md`; other files are available as reference or for scripts the skill invokes.
 
 ---
 
