@@ -120,7 +120,12 @@ Wait for approval.
 
 ### 9. Hand off
 
-When the spec is approved, suggest the planning skill for an implementation plan. Do not start coding or planning in this skill unless the user asks you to continue in the same session.
+When the spec is approved, suggest the next step:
+
+- For a new project or feature that needs architecture, data model, or tech-stack decisions written down, suggest the **technical-documentation** skill to expand the spec into production-ready technical docs.
+- For a small, well-understood change, the **planning** skill can take the spec directly.
+
+Do not start coding or planning in this skill unless the user asks you to continue in the same session.
 
 ## Principles
 

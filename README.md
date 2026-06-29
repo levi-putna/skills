@@ -18,12 +18,23 @@ npx @levi-putna/agent-kit@latest list levi-putna/skills
 |---|---|---|
 | [general-writing](./skills/general-writing/) | Rewrite or draft text in clear, natural language. Strips AI clichés, filler, and overly formal phrasing. | [Install guide](./skills/general-writing/README.md#install) |
 | [brainstorming](./skills/brainstorming/) | Think through ideas with a trusted colleague before building. Writes design specs. | [Install guide](./skills/brainstorming/README.md#install) |
+| [technical-documentation](./skills/technical-documentation/) | Turn an approved design into a production-ready set of technical docs (architecture, data model, tech-stack decisions) an AI agent can build from. | [Install guide](./skills/technical-documentation/README.md#install) |
+| [refining-docs](./skills/refining-docs/) | Refine and tune an existing doc set — gap analysis, consistency checks, diagrams, decision tuning. | [Install guide](./skills/refining-docs/README.md#install) |
 | [planning](./skills/planning/) | Turn an approved design into a TDD implementation plan with exact tasks. | [Install guide](./skills/planning/README.md#install) |
 | [executing-plans](./skills/executing-plans/) | Execute a plan task-by-task with verification and review checkpoints. | [Install guide](./skills/executing-plans/README.md#install) |
 
 ### Design-to-ship workflow
 
-Install all three for structured feature work (interactive picker):
+The skills chain into a spec-driven pipeline, each step writing a reviewable artifact and handing off to the next:
+
+```
+brainstorming  →  technical-documentation  →  planning  →  executing-plans
+docs/designs/      docs/technical/             docs/plans/    (writes code)
+                   ▲
+                   └─ refining-docs (re-run any time to tune the doc set)
+```
+
+Install all of them for structured feature work (interactive picker):
 
 ```sh
 npx @levi-putna/agent-kit@latest add levi-putna/skills --global
@@ -33,9 +44,34 @@ Or install individually:
 
 ```sh
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill technical-documentation --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill refining-docs --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill planning --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans --global
 ```
+
+### Documentation layout
+
+The pipeline skills read and write to a single `docs/` directory at the project root. The layout separates **living** documents (always reflect the current system) from **point-in-time** records (a decision captured on a date):
+
+```
+docs/
+  designs/      # brainstorming specs — point-in-time, dated   2026-06-29-checkout.md
+  technical/    # technical-documentation — living, canonical  architecture.md, data-model.md …
+  plans/        # planning — point-in-time, dated              2026-06-29-checkout.md
+```
+
+| Folder | Written by | Lifecycle | Filenames |
+|---|---|---|---|
+| `docs/designs/` | brainstorming | Point-in-time — the *what and why* at decision time | `YYYY-MM-DD-<name>.md` |
+| `docs/technical/` | technical-documentation, refining-docs | **Living** — the canonical source of truth, kept current | `<doc-name>.md` (no date) |
+| `docs/plans/` | planning | Point-in-time — the task list for one piece of work | `YYYY-MM-DD-<name>.md` |
+
+Rules of thumb:
+
+- **`docs/technical/` is the source of truth.** No dates in its filenames — `architecture.md` is *always* the current architecture. `planning` reads it before building; `refining-docs` keeps it accurate as the project evolves.
+- **`designs/` and `plans/` are history.** Dated filenames make it clear they record a moment, not the present state.
+- Use the user's preferred location if they specify one; otherwise default to these paths.
 
 ---
 
