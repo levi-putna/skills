@@ -37,8 +37,8 @@ flowchart TD
     api --> worker
     worker --> db
 
-    classDef primary fill:#4f46e5,stroke:#3730a3,color:#fff
-    classDef store fill:#10b981,stroke:#059669,color:#fff
+    classDef primary fill:#4f46e5,stroke:#3730a3,color:#ffffff
+    classDef store fill:#10b981,stroke:#059669,color:#ffffff
 ```
 
 ## Request flow (sequence)
