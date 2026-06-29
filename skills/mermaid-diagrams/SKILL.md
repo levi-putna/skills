@@ -27,7 +27,7 @@ Create diagrams that are **correct**, **readable**, and **visually polished** �
 1. **Clarify purpose** — one sentence: what should the reader learn?
 2. **Pick diagram type** — use the decision matrix below; suggest alternatives if unclear
 3. **Draft structure** — nodes, edges, grouping; stay under 15 nodes
-4. **Apply theme** — init directive + semantic `classDef` (never bare defaults)
+4. **Apply theme** — init directive + semantic `classDef`; verify text/background contrast
 5. **Review** — run the quality checklist before delivering
 
 ## Diagram type decision matrix
@@ -69,25 +69,57 @@ flowchart LR
 
 **Do not** set `fontFamily` in theme variables — headless renderers fall back to Times New Roman.
 
-### 2. Soft lines
+### 2. Text contrast — pair fill and label colour
+
+Every coloured node, subgraph, or theme variable with a custom background MUST use readable text:
+
+| Background | Text colour | Typical use |
+|---|---|---|
+| Light (`#f8fafc`, `#fef3c7`, `#ffffff`) | Dark (`#1e293b`, `#334155`, `#92400e`) | Subgraphs, warning/external nodes |
+| Medium–dark (`#4f46e5`, `#10b981`, `#3730a3`) | White (`#ffffff`) | Primary services, data stores |
+| Dark doc theme (`#1e293b`, `#0f172a`) | White (`#ffffff`, `#f8fafc`) | `textColor`, `titleColor`, `primaryTextColor` |
+
+**Rules:**
+
+- Set `primaryTextColor` and `textColor` in `%%{init}` to match the overall theme (dark text on light docs, light text on dark docs).
+- In every `classDef`, always set `color:` explicitly — never rely on Mermaid defaults after a custom `fill`.
+- Light fill + white text, or dark fill + dark text, is an automatic fail — fix before delivering.
+
+**Dark doc theme** (when embedding in dark-mode docs or dark README backgrounds):
+
+```mermaid
+%%{init: {'theme': 'base', 'themeVariables': {
+  'primaryColor': '#4f46e5', 'primaryTextColor': '#ffffff',
+  'primaryBorderColor': '#6366f1', 'lineColor': '#64748b',
+  'secondaryColor': '#10b981', 'tertiaryColor': '#f59e0b',
+  'background': '#0f172a', 'mainBkg': '#1e293b',
+  'nodeBorder': '#475569', 'clusterBkg': '#334155',
+  'clusterBorder': '#475569', 'titleColor': '#f8fafc',
+  'edgeLabelBackground': '#1e293b', 'textColor': '#f1f5f9'
+}}}%%
+flowchart LR
+    A[Example] --> B[Styled]
+```
+
+### 3. Soft lines
 
 `lineColor: '#94a3b8'` (slate-400) is the single biggest visual upgrade. For dark backgrounds use `#64748b`.
 
-### 3. Limit density
+### 4. Limit density
 
 - **Max ~15 nodes** per diagram; split larger systems into linked diagrams
 - Use `subgraph` for logical groups with meaningful titles
 - Prefer `LR` for pipelines and sequential flows; `TD` for hierarchies
 - Use invisible spacing links (`A ~~~ B`) only when layout is cramped
 
-### 4. Meaningful labels
+### 5. Meaningful labels
 
 - Node IDs: `camelCase` (`orderService`, not `s1`)
 - Display labels: short natural language (`[Order Service]`)
 - Edge labels: verb phrases (`"Validates via API"`)
 - Match codebase terminology where the diagram documents real systems
 
-### 5. Semantic colour — max 3–4 hues
+### 6. Semantic colour — max 3–4 hues
 
 Map meaning, not decoration:
 
@@ -99,21 +131,23 @@ Map meaning, not decoration:
 | Lines, borders, secondary | Slate | `#64748b`, `#94a3b8` |
 | Errors only | Red | `#ef4444` |
 
-Apply via `classDef`, not per-node inline `style`:
+Apply via `classDef`, not per-node inline `style`. **Always set `color` on each `classDef` to contrast with `fill`:**
 
 ```mermaid
-%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#94a3b8'}}}%%
+%%{init: {'theme': 'base', 'themeVariables': {'lineColor': '#94a3b8', 'textColor': '#334155'}}}%%
 flowchart TD
     api[API]:::primary
     db[(Database)]:::store
     ext[Payment Gateway]:::external
 
-    classDef primary fill:#4f46e5,stroke:#3730a3,color:#fff
-    classDef store fill:#10b981,stroke:#059669,color:#fff
+    classDef primary fill:#4f46e5,stroke:#3730a3,color:#ffffff
+    classDef store fill:#10b981,stroke:#059669,color:#ffffff
     classDef external fill:#fef3c7,stroke:#d97706,color:#92400e
 ```
 
-### 6. Modern syntax
+Dark fills → `color:#ffffff`. Light fills → `color:#1e293b` or a dark shade that matches the hue.
+
+### 7. Modern syntax
 
 - `flowchart TD` not `graph TD`
 - `stateDiagram-v2` not legacy `stateDiagram`
@@ -172,6 +206,8 @@ For chat responses, a fenced `mermaid` block is enough unless the user asked for
 Before delivering, verify:
 
 - [ ] `%%{init}` present with soft `lineColor`
+- [ ] Text contrasts with every custom background (white on dark fills, dark on light fills)
+- [ ] `primaryTextColor` / `textColor` in init match light or dark doc theme
 - [ ] Under 15 nodes (or split with a note linking follow-on diagrams)
 - [ ] Labels readable without jargon; IDs are camelCase
 - [ ] Colours map to meaning; red used only for errors
@@ -186,7 +222,7 @@ Before delivering, verify:
 |---|---|
 | Clarity of message | Pixel-perfect layout tuning |
 | Consistent theme across a doc set | Animated or 3D effects |
-| Soft lines and readable contrast | Custom fonts |
+| Soft lines and readable contrast (text vs fill) | Custom fonts |
 | Right diagram type | Matching a specific brand guide unless provided |
 | Splitting complex views | Fitting everything in one diagram |
 | Semantic colour (3–4 hues) | Rainbow nodes for decoration |
@@ -199,6 +235,7 @@ Before delivering, verify:
 - 25+ nodes in one chart — split it
 - Inline `style` on every node — use `classDef`
 - Red for non-error emphasis
+- White text on light `fill` (or dark text on dark `fill`) — unreadable labels
 - Diagram with no prose context in docs
 - `graph` keyword for new flowcharts
 
@@ -207,6 +244,7 @@ Before delivering, verify:
 | Symptom | Fix |
 |---|---|
 | Harsh black lines | Add init with `lineColor: '#94a3b8'` |
+| Text invisible / low contrast | Dark text on light fills; white text on dark fills; set `color` in every `classDef` |
 | Nodes overlap | Fewer nodes, `subgraph`, or split diagram |
 | Labels truncated | Shorten text or use `<br/>` sparingly |
 | Won't render | Check quotes, brackets, and reserved words |
