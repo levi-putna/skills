@@ -54,16 +54,18 @@ import assert from 'node:assert/strict';
 import { createCart } from '../src/cart.ts';
 
 describe('cart total', () => {
-  test('sums item prices', () => {
+  test('REQ-012-AC1: sums item prices', () => {
     const cart = createCart([{ price: 10 }, { price: 5 }]);
     assert.equal(cart.total(), 15);
   });
 
-  test('throws on negative price', () => {
+  test('REQ-012-AC2: throws on negative price', () => {
     assert.throws(() => createCart([{ price: -1 }]), /price must be >= 0/);
   });
 });
 ```
+
+Include the **REQ-ID** in the test name when the plan or `requirements.md` specifies one — this enables traceability for **conformance-check** and impact analysis.
 
 Useful tools:
 - `assert.equal` / `assert.deepEqual` / `assert.throws` / `assert.rejects` (async)
@@ -85,7 +87,7 @@ When executing a plan task (from executing-plans), the plan already specifies th
 
 Before calling a requirement done:
 
-- Every acceptance criterion in `docs/technical/requirements.md` for this slice has a test
+- Every acceptance criterion in `docs/technical/requirements.md` for this slice has a test named with its REQ-ID where applicable
 - Edge cases and failure modes are tested, not just the happy path
 - Error handling is asserted (the right error, not just "throws")
 - `npm test` is fully green — no skipped or `.only` tests left behind
@@ -116,6 +118,7 @@ When the slice is built and green, return control to whatever invoked this loop:
 - **Red before green** — no code without a failing test
 - **Minimal green** — only enough to pass; refactor after
 - **Tests are the spec** — make the behaviour right, never fake the green
+- **REQ-ID traceability** — test names map to acceptance criteria for conformance audits
 - **node:test, node:assert** — built-in by default
 - **Small steps, frequent commits** — one behaviour at a time
 

@@ -10,6 +10,8 @@ The agent will:
 - Work through tasks in order, following each checkbox step
 - Run tests and commands as specified
 - Pause every 3 tasks (or sooner if blocked) for your review
+- On delta plans: verify baseline tests are green, report scope at checkpoints
+- Run conformance-check after e2e passes on brownfield work
 - Stop and ask when something fails or the plan has gaps
 - Summarise results when all tasks are complete
 

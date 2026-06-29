@@ -49,6 +49,7 @@ Scale the set to the project — do **not** generate all eight for a small tool.
 | API / Interface Contracts | `api-contracts.md` | AI-drafted, human-tuned | Endpoints or interfaces, payloads, errors. |
 | Non-Functional Requirements | `nfr.md` | Human-guided | Performance, security, scale, accessibility — with measurable targets. |
 | Engineering Guidelines | `engineering-guidelines.md` | Mixed | Conventions, testing strategy, structure. Seeds `CLAUDE.md`/`AGENTS.md`. |
+| Doc Changelog | `CHANGELOG.md` | Human | REQ-level history of doc changes — feeds reconciling-changes. |
 
 ### Picking the subset
 
@@ -126,9 +127,11 @@ Ask the user to read the files on disk:
 
 ### 6. Hand off
 
-When approved, suggest the planning skill:
+When approved, suggest the next step based on context:
 
 > "Docs approved. Want me to turn these into an implementation plan with the planning skill?"
+
+For brownfield projects with existing code, suggest **conformance-check** first, then planning when ready.
 
 Also offer to seed `CLAUDE.md`/`AGENTS.md` from `engineering-guidelines.md` if the project doesn't have one. Don't start planning or coding without the go-ahead.
 
@@ -172,14 +175,22 @@ What this product deliberately does not do.
 ```markdown
 # <Product> — Requirements (PRD)
 
+> Requirements use stable **REQ-IDs** for traceability through plans, tests, and impact reports.
+> Format: `REQ-NNN` for features, `REQ-NNN-ACn` for acceptance criteria.
+
 ## Features
 For each feature: a user story and testable acceptance criteria.
 
-### F1: <name>
+### REQ-001: <name>
+**Status:** active | deprecated | removed
+**Introduced:** YYYY-MM-DD
+**Last changed:** YYYY-MM-DD
+
 **As a** <user> **I want** <capability> **so that** <benefit>.
 
 **Acceptance criteria**
-- [ ] <observable, testable condition>
+- [ ] REQ-001-AC1: <observable, testable condition>
+- [ ] REQ-001-AC2: <observable, testable condition>
 
 ## Out of scope (this release)
 - <explicitly excluded item>
@@ -277,10 +288,17 @@ erDiagram
 Naming, file structure, formatting, error handling.
 
 ## Testing strategy
-What gets tested and how. Coverage expectations.
+What gets tested and how. Coverage expectations. Every REQ-ID should map to at least one test.
 
 ## Agent rules (non-negotiable)
 Rules the AI must follow on every change. This section seeds CLAUDE.md / AGENTS.md.
+
+- Cite the REQ-ID(s) each change satisfies
+- Never delete code or tests outside the current delta plan's scope
+- Never change a 🔒 human-locked decision without explicit human approval
+- Read existing implementation before modifying — prefer surgical edits on brownfield code
+- If a test fails outside the planned scope, stop and report — do not fix forward
+- Run the full test suite before and after each batch; unrelated failures block progress
 ```
 
 ## Self-check before final review

@@ -22,13 +22,14 @@ docs/designs/      docs/technical/             docs/plans/
 | Doc | Owner | Purpose |
 |---|---|---|
 | `product-brief.md` | Human | Vision, users, problem, success metrics |
-| `requirements.md` | Human | Features, user stories, acceptance criteria, out-of-scope |
+| `requirements.md` | Human | Features with stable REQ-IDs, user stories, acceptance criteria |
 | `architecture.md` | AI-drafted, human-tuned | System overview, components, data flow (Mermaid) |
 | `tech-stack.md` | Mixed | Every tech choice with owner tag + ADRs |
 | `data-model.md` | AI-drafted, human-tuned | Entities, relationships (Mermaid ER) |
 | `api-contracts.md` | AI-drafted, human-tuned | Endpoints, payloads, errors |
 | `nfr.md` | Human-guided | Performance, security, scale, accessibility — measurable |
 | `engineering-guidelines.md` | Mixed | Conventions, testing — seeds `CLAUDE.md`/`AGENTS.md` |
+| `CHANGELOG.md` | Human | REQ-level doc change history — feeds reconciling-changes |
 
 ## When to use it
 
@@ -36,7 +37,7 @@ docs/designs/      docs/technical/             docs/plans/
 - You have a design or rough requirements and need them turned into buildable technical docs
 - After brainstorming, before planning
 
-To tune or extend the docs later, use the **refining-docs** skill.
+To tune docs later, use **refining-docs**. To implement doc changes on existing code, use **reconciling-changes** → **planning** (delta).
 
 ## Install
 
