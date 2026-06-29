@@ -1,13 +1,16 @@
 # planning
 
-Turn an approved design into a bite-sized, test-driven implementation plan. Each task has exact file paths, complete code snippets, and verification steps.
+Turn an approved design into a bite-sized, test-driven implementation plan. Supports **greenfield** (new feature) and **delta** (doc change on existing app) modes.
+
+Each task has exact file paths, REQ-ID traceability, complete code snippets, and verification steps.
 
 ## What it does
 
 The agent will:
 
-- Read your approved spec or requirements
-- Map files to create and modify
+- Read your approved spec, impact report, or requirements
+- Choose greenfield or delta mode based on context
+- Map files to create and modify (delta plans respect frozen scope)
 - Break work into small, reviewable tasks with checkbox steps
 - Include failing tests first, then minimal implementation (TDD)
 - Self-review for gaps, placeholders, and inconsistencies
@@ -16,14 +19,16 @@ The agent will:
 
 ## When to use it
 
-- After brainstorming, when the design is approved
+- After **technical-documentation**, when docs are approved (greenfield)
+- After **reconciling-changes**, when the impact report is approved (delta)
 - When you have clear requirements and need a task breakdown
-- Before an agent or engineer starts implementation
 
 ## Workflow
 
 ```
-brainstorming → planning → executing-plans
+Greenfield:  brainstorming → technical-documentation → planning → executing-plans
+
+Brownfield:  refining-docs → reconciling-changes → planning (delta) → executing-plans
 ```
 
 ## Install

@@ -6,6 +6,7 @@ description: >-
   gaps, check cross-document consistency, add or update Mermaid diagrams, re-tune
   a locked vs agent-owned decision, or tighten the writing. Use when the user
   wants to review, update, or polish technical docs rather than write them from scratch.
+  Also use when recording doc changes in CHANGELOG.md before reconciling-changes.
 ---
 
 # Refining Docs
@@ -32,6 +33,7 @@ Pick the mode from what the user asks. Several can run together.
 | **Diagrams** | "add a diagram", "update the flow" | Add or update Mermaid diagrams; verify they render; add captions |
 | **Decision tuning** | "lock this", "let the agent decide X" | Change a decision's owner tag (🔒/🤖/❓) and propagate the consequence |
 | **Tighten** | "clean this up", "too verbose" | Improve clarity and structure without changing meaning |
+| **Changelog** | after editing reqs, "record this change" | Append to `docs/technical/CHANGELOG.md` with REQ-IDs and change type |
 
 If the user is vague ("improve the docs"), default to **gap analysis + consistency** and report findings before editing.
 
@@ -78,6 +80,23 @@ Report what changed, file by file, in a few lines. Flag anything still open:
 
 > "Updated `tech-stack.md` (database → Postgres, 🔒) and `architecture.md` to match. One thing left for you: the cache TTL in `nfr.md` is still a placeholder."
 
+If requirements changed, offer to record the change in `docs/technical/CHANGELOG.md` (changelog mode) before **reconciling-changes**.
+
+## Changelog format
+
+When recording doc changes, append to `docs/technical/CHANGELOG.md` (create if missing):
+
+```markdown
+## YYYY-MM-DD — [short title]
+
+| Type | REQ-ID | Summary |
+|---|---|---|
+| MODIFY | REQ-042 | Export format now includes header row |
+| ADD | REQ-055 | CSV export for orders |
+```
+
+Change types match **reconciling-changes**: ADD, MODIFY, REMOVE, CLARIFY.
+
 ## Standards (inherited from authoring)
 
 Keep refined docs to the same bar the technical-documentation skill sets:
@@ -96,6 +115,13 @@ Keep refined docs to the same bar the technical-documentation skill sets:
 - **Protect locked decisions** — 🔒 changes only on explicit request
 - **The set over the file** — a change to one doc often ripples; keep the whole set consistent
 - **Preserve voice** — improve the docs, don't replace the author's intent
+- **Changelog before reconcile** — record REQ-level changes so impact analysis has structured input
+
+## Hand off
+
+When doc changes affect behaviour (ADD/MODIFY/REMOVE, not CLARIFY-only):
+
+> "Docs updated. Want me to run **conformance-check** (audit current drift), then **reconciling-changes** (impact report)?"
 
 ## Anti-patterns
 

@@ -15,8 +15,11 @@ It picks the right mode from what you ask (several can combine):
 | **Diagrams** | Add or update Mermaid diagrams (and verify they render) |
 | **Decision tuning** | Change a choice's owner — 🔒 human-locked ↔ 🤖 agent-discretion |
 | **Tighten** | Clean up clarity and structure without changing meaning |
+| **Changelog** | Record REQ-level doc changes in `docs/technical/CHANGELOG.md` |
 
 Ask vaguely ("improve the docs") and it defaults to gap analysis + consistency, then reports findings before touching anything.
+
+After behavioural doc changes, it can hand off to **conformance-check** and **reconciling-changes**.
 
 ## How it works
 

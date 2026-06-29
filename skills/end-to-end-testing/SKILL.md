@@ -50,7 +50,7 @@ Stay Node-native by default. Add Playwright **only** when there's a browser UI t
 
 ### 1. Map requirements to scenarios
 
-Read `requirements.md`. For each feature's acceptance criteria, define an end-to-end scenario that exercises it through the real entry point (HTTP endpoint, CLI command, or UI flow). Cover the critical happy paths and the failure paths that matter (auth rejected, validation errors, empty states).
+Read `requirements.md`. For each feature's acceptance criteria (by REQ-ID, e.g. `REQ-042-AC1`), define an end-to-end scenario that exercises it through the real entry point (HTTP endpoint, CLI command, or UI flow). Cover the critical happy paths and the failure paths that matter (auth rejected, validation errors, empty states).
 
 List the scenarios for the user before writing them if there are many — a quick sanity check that you're verifying the right things.
 
@@ -138,7 +138,7 @@ Suggest the shipping skill. Note any scenarios deliberately not covered.
 ## Principles
 
 - **Verify the running app**, the way a real client uses it — real server, real browser, real data
-- **Tie every scenario to an acceptance criterion** in `requirements.md`
+- **Tie every scenario to a REQ-ID** in `requirements.md` — name e2e tests with the REQ-ID where applicable
 - **Failure means fix, not just report** — file tasks and re-enter the build loop
 - **One runner** — `node:test` drives everything, Playwright included
 - **Close only when green** — don't hand to shipping with red e2e

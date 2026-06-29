@@ -26,6 +26,15 @@ Announce at start: "I'm using the executing-plans skill to implement this plan."
 4. If concerns exist, raise them with the user before writing code
 5. If the plan is sound, create a todo list from the plan tasks and begin
 
+### Brownfield baseline (delta plans)
+
+When the plan header says **Mode: Delta**:
+
+1. Run the full test suite (`npm test`) — must be green before any changes
+2. Note the baseline commit or branch state
+3. Keep a mental inventory of **frozen scope** from the plan — do not touch files listed there
+4. If baseline tests fail, stop and report — do not proceed on a red suite
+
 ## Step 2: Execute in batches (the build loop)
 
 Work in batches of **3 tasks** (adjust down if tasks are large). Each task is built with the **test-driven-development** skill — that red-green-refactor loop with `node:test` is the inner engine; this skill orchestrates batches and checkpoints around it. For each task:
@@ -42,10 +51,13 @@ After each batch, **checkpoint** with the user:
 Batch complete — tasks N–M done.
 
 Completed:
-- [summary]
+- [summary, including REQ-IDs satisfied]
 
 Verification:
 - [test results]
+
+Scope check (delta plans):
+- [files touched vs plan file list — flag any out-of-scope edits]
 
 Up next:
 - [next tasks]
@@ -61,7 +73,8 @@ When all tasks are built and the unit/functional suite is green, the build isn't
 
 1. It exercises the running app against the acceptance criteria in `docs/technical/requirements.md`
 2. **If e2e fails**, it files fix tasks and hands control back here — re-enter the build loop (Step 2) on those tasks, then re-verify. Repeat until e2e is green
-3. **If e2e passes**, proceed to finish
+3. **If e2e passes**, run **conformance-check** on delta work — confirm REQ coverage and no frozen-scope violations
+4. Proceed to finish when conformance is acceptable
 
 Do not treat the work as complete while e2e is red.
 
@@ -103,6 +116,8 @@ Minor deviations (typo in path, renamed export) can be fixed inline and noted in
 - Keep changes minimal per task — no drive-by refactors
 - Match existing project conventions (style, imports, test patterns)
 - Update todos as you go so progress is visible
+- Cite REQ-IDs in commit messages when the plan specifies them (e.g. `feat(export): add CSV export (REQ-055)`)
+- On delta plans: if a test fails outside the current task's REQ scope, stop — do not "fix forward" into frozen areas
 
 ## Integration
 
@@ -110,11 +125,15 @@ Typical workflow:
 
 1. **brainstorming** — design and spec
 2. **technical-documentation** — architecture, data model, tech-stack decisions
-3. **planning** — the plan document
-4. **project-setup** — scaffold the repo and wire `node:test`
-5. **executing-plans** — orchestrate the build (this skill)
+3. **refining-docs** — tune docs as the project evolves
+4. **conformance-check** — audit docs vs code (optional but recommended before deltas)
+5. **reconciling-changes** — impact report when docs change on brownfield code
+6. **planning** — the plan document (greenfield or delta mode)
+7. **project-setup** — scaffold the repo and wire `node:test` (greenfield only)
+8. **executing-plans** — orchestrate the build (this skill)
    - **test-driven-development** — inner red-green-refactor loop per task
    - **end-to-end-testing** — outer verification gate; retriggers the build loop on failure
-6. **shipping** — PR and release
+9. **conformance-check** — post-build drift audit on delta work
+10. **shipping** — PR and release
 
 If subagents are available, dispatching one task per subagent with review between tasks is fine. This skill still applies for checkpointing and verification.
