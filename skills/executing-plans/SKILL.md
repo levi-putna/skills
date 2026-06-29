@@ -26,12 +26,12 @@ Announce at start: "I'm using the executing-plans skill to implement this plan."
 4. If concerns exist, raise them with the user before writing code
 5. If the plan is sound, create a todo list from the plan tasks and begin
 
-## Step 2: Execute in batches
+## Step 2: Execute in batches (the build loop)
 
-Work in batches of **3 tasks** (adjust down if tasks are large). For each task:
+Work in batches of **3 tasks** (adjust down if tasks are large). Each task is built with the **test-driven-development** skill — that red-green-refactor loop with `node:test` is the inner engine; this skill orchestrates batches and checkpoints around it. For each task:
 
 1. Mark the task in progress
-2. Follow each checkbox step in order — do not skip verifications
+2. Run the TDD loop: failing test → minimal code → refactor, until the task's tests pass (follow the plan's test/implementation steps; do not skip the "watch it fail" verification)
 3. Run tests and commands exactly as the plan specifies
 4. Mark complete only when verification passes
 5. Commit when the plan says to
@@ -55,13 +55,23 @@ Continue, or pause for review?
 
 Wait for approval before the next batch unless the user said to run through without stopping.
 
-## Step 3: Finish
+## Step 3: Verify end-to-end (the outer loop)
 
-When all tasks are done:
+When all tasks are built and the unit/functional suite is green, the build isn't done until the running app is verified. Run the **end-to-end-testing** skill:
 
-1. Run the full test suite (or what the plan specifies)
+1. It exercises the running app against the acceptance criteria in `docs/technical/requirements.md`
+2. **If e2e fails**, it files fix tasks and hands control back here — re-enter the build loop (Step 2) on those tasks, then re-verify. Repeat until e2e is green
+3. **If e2e passes**, proceed to finish
+
+Do not treat the work as complete while e2e is red.
+
+## Step 4: Finish
+
+When all tasks are done and e2e is green:
+
+1. Run the full test suite and e2e once more to confirm
 2. Summarise what changed: files touched, behaviour added, anything deferred
-3. Ask how the user wants to proceed: merge, open PR, keep the branch, or more work
+3. Hand off to the **shipping** skill to open a PR, or present options (merge, keep the branch, more work)
 
 If the project uses a finishing or review workflow, follow it. Otherwise, present options clearly.
 
@@ -99,7 +109,12 @@ Minor deviations (typo in path, renamed export) can be fixed inline and noted in
 Typical workflow:
 
 1. **brainstorming** — design and spec
-2. **planning** — this plan document
-3. **executing-plans** — implementation (this skill)
+2. **technical-documentation** — architecture, data model, tech-stack decisions
+3. **planning** — the plan document
+4. **project-setup** — scaffold the repo and wire `node:test`
+5. **executing-plans** — orchestrate the build (this skill)
+   - **test-driven-development** — inner red-green-refactor loop per task
+   - **end-to-end-testing** — outer verification gate; retriggers the build loop on failure
+6. **shipping** — PR and release
 
 If subagents are available, dispatching one task per subagent with review between tasks is fine. This skill still applies for checkpointing and verification.

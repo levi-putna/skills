@@ -15,6 +15,7 @@ Announce at start: "I'm using the planning skill to write the implementation pla
 ## Prerequisites
 
 - An approved design spec, or clear requirements from the user
+- If a technical doc set exists (`docs/technical/` from the technical-documentation skill), read it first — it carries the locked tech-stack decisions, architecture, and constraints the plan must respect
 - If requirements are still fuzzy, use the brainstorming skill first
 
 Save plans to:
