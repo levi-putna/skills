@@ -120,6 +120,46 @@ Create professional Mermaid diagrams — themed styling, semantic colours, layou
 
 ---
 
+### UI Component Development
+
+#### [component-library](./skills/component-library/)
+
+Set up component library showcase infrastructure with Storybook 8 or custom in-app gallery. Creates the foundation for component-driven development.
+
+|| |
+|---|---|
+| **When** | Starting a new project; need component gallery or playground |
+| **Creates** | Storybook config, category structure, documentation |
+| **Hands off to** | component-development |
+
+**Prompt:** *"Set up a component library showcase for this project."*
+
+#### [component-development](./skills/component-development/)
+
+Build UI components in isolation following CDD best practices. Creates components with stories, variants, interaction tests, and documentation.
+
+|| |
+|---|---|
+| **When** | Creating new UI elements; building reusable components |
+| **Creates** | Component + story file + tests |
+| **Follows** | shadcn/ui composition patterns, Vercel AI SDK patterns |
+
+**Prompt:** *"Create a UserCard component with avatar, name, role, and expand/collapse."*
+
+#### [component-testing](./skills/component-testing/)
+
+Add comprehensive testing to components: interaction tests, visual regression, accessibility audits, and unit tests.
+
+|| |
+|---|---|
+| **When** | After component-development; preparing for production |
+| **Creates** | Interaction tests, visual regression config, unit tests, CI setup |
+| **Verifies** | User behaviour, visual appearance, WCAG compliance |
+
+**Prompt:** *"Add comprehensive tests to the UserCard component."*
+
+---
+
 ### Design and documentation
 
 #### [brainstorming](./skills/brainstorming/)
@@ -313,6 +353,9 @@ This is the **day-to-day loop** once an app exists. You edit docs; the agent cha
 | Ship verified work | shipping |
 | Improve prose (any context) | general-writing |
 | Draw or polish Mermaid diagrams | mermaid-diagrams |
+| Set up component showcase | component-library |
+| Build UI components | component-development |
+| Test UI components | component-testing |
 
 ---
 
@@ -413,6 +456,11 @@ npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming --g
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill technical-documentation --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill refining-docs --global
 
+# UI component development
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-library --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-development --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-testing --global
+
 # Change control
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill conformance-check --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill reconciling-changes --global
@@ -422,7 +470,7 @@ npx @levi-putna/agent-kit@latest add levi-putna/skills --skill planning --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill project-setup --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill test-driven-development --global
-npx @levi-putna/agent-kit@latest add levi-putna/skills --skill end-to-end-testing --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill end-to-e nd-testing --global
 
 # Ship & utility
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill shipping --global
@@ -442,6 +490,9 @@ skills/
     README.md         # Human install guide
   technical-documentation/
   refining-docs/
+  component-library/
+  component-development/
+  component-testing/
   conformance-check/
   reconciling-changes/
   planning/
