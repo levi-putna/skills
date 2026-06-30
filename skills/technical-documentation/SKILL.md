@@ -37,7 +37,7 @@ Brainstorming produces a design spec (the *what and why*). This skill expands it
 
 ## The document set
 
-Scale the set to the project — do **not** generate all eight for a small tool. Propose a subset, confirm it, then draft.
+Scale the set to the project — do **not** generate all nine for a small tool. Propose a subset, confirm it, then draft.
 
 | Doc | File | Owner | Purpose |
 |---|---|---|---|
@@ -49,16 +49,17 @@ Scale the set to the project — do **not** generate all eight for a small tool.
 | API / Interface Contracts | `api-contracts.md` | AI-drafted, human-tuned | Endpoints or interfaces, payloads, errors. |
 | Non-Functional Requirements | `nfr.md` | Human-guided | Performance, security, scale, accessibility — with measurable targets. |
 | Engineering Guidelines | `engineering-guidelines.md` | Mixed | Conventions, testing strategy, structure. Seeds `CLAUDE.md`/`AGENTS.md`. |
+| UI Requirements | `ui-requirements.md` | Human-guided | Design system needs, brand identity, accessibility. **For UI projects only.** Feeds design-system skill. |
 | Doc Changelog | `CHANGELOG.md` | Human | REQ-level history of doc changes — feeds reconciling-changes. |
 
 ### Picking the subset
 
 | Project type | Suggested core | Usually skip |
 |---|---|---|
-| CLI / script / small library | product-brief, requirements, architecture, tech-stack, engineering-guidelines | api-contracts, data-model |
-| Web app / SaaS | all eight | — |
-| API / backend service | all except a thin product-brief | — |
-| Data / ML pipeline | product-brief, requirements, architecture, data-model, tech-stack, nfr | api-contracts |
+| CLI / script / small library | product-brief, requirements, architecture, tech-stack, engineering-guidelines | api-contracts, data-model, ui-requirements |
+| Web app / SaaS | all nine | — |
+| API / backend service | all except thin product-brief and ui-requirements | — |
+| Data / ML pipeline | product-brief, requirements, architecture, data-model, tech-stack, nfr | api-contracts, ui-requirements |
 
 Always propose, never assume. Let the user add or drop docs.
 
