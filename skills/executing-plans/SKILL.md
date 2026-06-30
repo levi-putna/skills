@@ -24,7 +24,7 @@ Announce at start: "I'm using the executing-plans skill to implement this plan."
 1. Read the full plan
 2. Scan the codebase areas the plan touches
 3. Review critically — note gaps, wrong paths, missing dependencies, or ambiguous steps
-4. For UI tasks, verify the plan includes component audit decisions, design-system references, and component-testing verification
+4. For UI tasks, verify the plan includes primary user task, primary action, UI/UX review, component audit decisions, design-system references, and component-testing verification
 5. If concerns exist, raise them with the user before writing code
 6. If the plan is sound, create a todo list from the plan tasks and begin
 
@@ -44,6 +44,8 @@ Work in batches of **3 tasks** (adjust down if tasks are large). Each task is bu
 1. Mark the task in progress
 2. If the task requires UI elements:
    - Confirm the design-system and component-library are available
+   - Run **ui-ux-best-practices** for composed views, dashboards, forms, landing pages, or complex flows before final integration
+   - Confirm the primary task, hierarchy, whitespace, responsive behaviour, and anti-slop checks are acceptable
    - Audit existing components before creating anything new
    - Prefer composing or extending existing components over creating new ones
    - If extending, run existing stories/tests plus visual regression or equivalent snapshot checks to verify backwards compatibility
@@ -69,6 +71,8 @@ Scope check (delta plans):
 - [files touched vs plan file list — flag any out-of-scope edits]
 
 UI/component check (when applicable):
+- [primary user task and primary action]
+- [ui-ux-best-practices review result]
 - [existing components audited]
 - [extend/create decision and rationale]
 - [design-system tokens/standards followed]
@@ -112,6 +116,7 @@ Stop immediately and ask the user when:
 - Instructions contradict the codebase or each other
 - You need a decision the plan does not cover
 - A UI task needs a design-system decision, component audit decision, or brand/accessibility requirement that is missing
+- A composed view fails the ui-ux-best-practices review and the fix is not obvious from the plan
 - Verification fails twice on the same step
 
 Do not guess past blockers. Do not silently change the plan's approach.
@@ -132,6 +137,7 @@ Minor deviations (typo in path, renamed export) can be fixed inline and noted in
 - Keep changes minimal per task — no drive-by refactors
 - Match existing project conventions (style, imports, test patterns)
 - For UI, match the design-system tokens and component decision framework; never create one-off inline UI to finish faster
+- For views and flows, optimise for clarity, whitespace, responsive behaviour, and low user friction before visual decoration
 - Update todos as you go so progress is visible
 - Cite REQ-IDs in commit messages when the plan specifies them (e.g. `feat(export): add CSV export (REQ-055)`)
 - On delta plans: if a test fails outside the current task's REQ scope, stop — do not "fix forward" into frozen areas
@@ -150,6 +156,7 @@ Typical workflow:
 8. **design-system** and **component-library** — establish UI standards and isolated component infrastructure when UI is in scope
 9. **executing-plans** — orchestrate the build (this skill)
    - **test-driven-development** — inner red-green-refactor loop per task
+   - **ui-ux-best-practices** — hierarchy, whitespace, responsiveness, accessibility, task flow, and anti-slop review for composed views
    - **component-development** — component audit, extend/create decision, isolated UI implementation
    - **component-testing** — interaction, visual, accessibility, and regression checks for UI elements
    - **end-to-end-testing** — outer verification gate; retriggers the build loop on failure

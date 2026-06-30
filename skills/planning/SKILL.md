@@ -55,6 +55,8 @@ Before writing tasks, map files to create or modify and what each one owns. Lock
 
 For any task that touches pages, screens, visual elements, forms, dashboards, navigation, or component files:
 
+- Add a **ui-ux-best-practices** review step for composed views, dashboards, forms, landing pages, and complex workflows
+- Define the primary user task and primary action before listing components
 - Identify required UI elements and map them to existing components where possible
 - Add an explicit **component audit** step before creating new components
 - Prefer extending existing components with variants, sizes, composition, or optional props
@@ -62,6 +64,7 @@ For any task that touches pages, screens, visual elements, forms, dashboards, na
 - If creating a new component, require written justification explaining why existing components are insufficient
 - Ensure all UI tasks reference design-system tokens and standards; no hardcoded colours, spacing, typography, shadows, or radii
 - Include Storybook/component-library work before application integration
+- Include responsive viewports, realistic content, loading/empty/error states, and anti-slop checks in verification
 
 ## Task sizing
 
@@ -127,6 +130,9 @@ For **delta** plans, add after Constraints:
 **Produces:** [Functions, exports, or behaviour later tasks rely on — names and signatures]
 
 **UI/component decision (when applicable):**
+- Primary user task: `[what the user is trying to do]`
+- Primary action: `[main action, or "none" for read-only views]`
+- UI/UX review: `[ui-ux-best-practices required? yes/no and why]`
 - Existing components audited: `[component names or "none exist"]`
 - Decision: Extend existing | Create new | Compose existing
 - Reason: `[why this avoids one-off UI and component duplication]`
@@ -185,7 +191,7 @@ After the full plan is written:
 2. **Placeholder scan** — fix any vague steps
 3. **Name consistency** — function names, paths, and types match across tasks
 4. **Order** — no task depends on something not built yet
-5. **UI governance** — UI tasks include design-system prerequisites, component audit decisions, component tests, visual/a11y checks, and backwards compatibility checks for extensions
+5. **UI governance** — UI tasks include primary user task, primary action, design-system prerequisites, component audit decisions, component tests, visual/a11y checks, anti-slop review, responsive checks, and backwards compatibility checks for extensions
 
 Fix issues inline before presenting the plan.
 

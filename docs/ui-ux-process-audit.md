@@ -10,6 +10,7 @@ The lifecycle now has the core controls required to support good UI/UX practice:
 - Design intent is captured before build in `ui-requirements.md`
 - Brand and component standards are formalised by the `design-system` skill
 - Component infrastructure is established by `component-library`
+- Clean UI/UX quality is reviewed by `ui-ux-best-practices`
 - UI implementation runs through a component-first element loop
 - Existing components must be audited before new components are created
 - Extensions require backwards compatibility verification
@@ -25,6 +26,7 @@ The lifecycle now has the core controls required to support good UI/UX practice:
 | Brand decisions protected | Pass | Human-locked brand colours, assets, typography, and accessibility decisions are carried forward into the design system |
 | Component proliferation controlled | Pass | `component-development` requires audit, extend/create decision, and written justification before creating new components |
 | Existing components safely extended | Pass | Planning, execution, and testing require optional props, unchanged defaults, existing story/test runs, and visual regression checks |
+| Clean UI/UX and anti-slop review | Pass | `ui-ux-best-practices` checks hierarchy, whitespace, responsive behaviour, accessibility, task flow, and AI-generated UI antipatterns |
 | Component-first application build | Pass | README, planning, and executing-plans prohibit one-off inline UI and require reusable elements before app integration |
 | Isolated component development | Pass | `component-library` establishes Storybook/custom gallery and requires design-system conformance in stories |
 | Accessibility covered | Pass | UI requirements capture WCAG level; component-testing covers a11y, keyboard, contrast, reduced motion, and touch targets |
@@ -46,8 +48,13 @@ The lifecycle now has the core controls required to support good UI/UX practice:
 4. **Component catalogue hygiene requires ongoing review.**  
    The audit process prevents most duplication, but teams should periodically review Storybook/component registry for near-duplicate patterns.
 
+5. **UX judgement remains product-specific.**  
+   The `ui-ux-best-practices` skill blocks common AI UI antipatterns, but important product flows should still be tested with real or representative users when risk is high.
+
 ## Recommendation
 
 Approve the process as ready for UI/UX component-driven development, with one operating rule:
 
 > No UI feature work starts until `ui-requirements.md`, `docs/design/design-system.md`, and component-library infrastructure exist or are explicitly included as first tasks in the implementation plan.
+
+For composed views, also run `ui-ux-best-practices` before final integration to verify clarity, whitespace, responsive behaviour, and anti-slop risks.
