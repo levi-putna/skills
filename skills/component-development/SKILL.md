@@ -28,10 +28,216 @@ CDD is building UI components independently before assembling them into pages:
 
 Before building a component:
 
-1. **Component library exists** — Use **component-library** skill if not set up
-2. **Check for existing components** — Search for similar components before creating new ones
-3. **Check design system** — If shadcn/ui is installed, prefer composing existing primitives
-4. **Read requirements** — If `docs/technical/` exists, check for component specifications
+1. **Design system exists** — Use **design-system** skill first to establish tokens and standards
+2. **Component library exists** — Use **component-library** skill if not set up
+3. **Audit existing components** — ALWAYS check if similar component exists before creating new
+4. **Check design system** — If shadcn/ui is installed, prefer composing existing primitives
+5. **Read requirements** — If `docs/technical/` exists, check for component specifications
+
+## Component audit process (MANDATORY)
+
+**BEFORE creating any component, MUST complete this audit:**
+
+### Step 1: Search existing components
+
+```bash
+# List all existing components
+ls -R components/ui/ components/composed/ components/patterns/ components/ai/
+
+# Search for similar functionality
+grep -r "Button" components/
+grep -r "Card" components/
+```
+
+### Step 2: Review Storybook
+
+Open http://localhost:6006 and:
+- Browse all component categories
+- Check variants and props of similar components
+- Look for components that could be extended
+
+### Step 3: Read design system
+
+Check `docs/design/design-system.md` for:
+- Component creation guidelines
+- Extension vs. creation decision tree
+- Examples of similar scenarios
+
+### Step 4: Make decision
+
+Ask yourself:
+
+| Question | If YES → | If NO → |
+|----------|----------|---------|
+| Does similar component exist? | Go to next question | CREATE new component |
+| Same purpose, different style? | EXTEND with variant | Go to next question |
+| Same purpose, different size? | EXTEND with size prop | Go to next question |
+| Same purpose, optional feature? | EXTEND with prop | Go to next question |
+| Fundamentally different purpose? | CREATE new component | EXTEND existing |
+
+### Step 5: Document decision
+
+**If creating NEW component:**
+```markdown
+## Why New Component?
+
+**Component:** UserCard
+
+**Existing similar components checked:**
+- Card (insufficient: doesn't handle user-specific layout)
+- ProfileCard (insufficient: different data structure)
+
+**Why existing insufficient:**
+- Card is too generic, lacks user-specific fields
+- ProfileCard is for full profiles, not compact user cards
+- Different interaction patterns (expand/collapse not in existing)
+
+**Decision:** Create new UserCard component
+```
+
+**If EXTENDING existing component:**
+```markdown
+## Component Extension
+
+**Component:** Button
+
+**New functionality:** Loading state with spinner
+
+**New props:**
+- `loading?: boolean` — Shows spinner and disables button
+
+**Backward compatibility:**
+- ✅ New prop is optional (default: false)
+- ✅ Existing usage unaffected
+- ✅ Default rendering unchanged
+- ✅ All existing stories still pass
+
+**Testing plan:**
+1. Run all existing Button stories
+2. Visual regression test to catch unintended changes
+3. Test existing usage in codebase
+4. Add new stories for loading state
+```
+
+## Extension backward compatibility
+
+When extending a component, MUST verify:
+
+### 1. All existing stories still render
+
+```bash
+yarn storybook
+# Manually check OR run visual regression
+yarn test:visual
+```
+
+### 2. Existing usage still works
+
+```bash
+# Find all usages of the component
+grep -r "<Button" app/ components/
+grep -r "import.*Button" app/ components/
+
+# Test critical paths manually or with e2e tests
+yarn test:e2e
+```
+
+### 3. New props are optional
+
+```typescript
+// ✅ Good: Optional prop with default
+interface ButtonProps {
+  loading?: boolean;  // Optional, defaults to false
+}
+
+// ❌ Bad: Required prop breaks existing usage
+interface ButtonProps {
+  loading: boolean;  // Required, breaks all existing <Button>
+}
+```
+
+### 4. Default behaviour unchanged
+
+```typescript
+// ✅ Good: Same default rendering
+<Button>Click me</Button>
+// Still renders same as before loading prop was added
+
+// ❌ Bad: Default rendering changed
+<Button>Click me</Button>
+// Now shows spinner by default (breaking change)
+```
+
+### 5. Document migration if breaking
+
+If breaking changes are unavoidable:
+
+```markdown
+## Breaking Changes
+
+**Component:** Button v2.0
+
+**Changes:**
+- Removed `primary` prop (use `variant="primary"` instead)
+- Changed `isLoading` prop to `loading`
+
+**Migration:**
+
+```diff
+- <Button primary isLoading={loading}>
++ <Button variant="primary" loading={loading}>
+```
+
+**Codemods available:**
+```bash
+npx button-v2-migration
+```
+```
+
+## Design system conformance
+
+All components MUST use design tokens from `docs/design/design-system.md`:
+
+### Colors
+
+```tsx
+// ✅ Good: Semantic tokens
+<Button className="bg-primary text-primary-foreground hover:bg-primary/90">
+
+// ❌ Bad: Hardcoded colors
+<Button className="bg-blue-500 text-white hover:bg-blue-600">
+```
+
+### Spacing
+
+```tsx
+// ✅ Good: Design system scale (4px grid)
+<Card className="p-4 gap-6 my-8">
+
+// ❌ Bad: Random spacing
+<Card style={{ padding: '17px', gap: '23px', marginTop: '35px' }}>
+```
+
+### Typography
+
+```tsx
+// ✅ Good: Type scale
+<h1 className="text-4xl font-bold leading-tight">
+
+// ❌ Bad: Custom sizing
+<h1 style={{ fontSize: '37px', fontWeight: 650, lineHeight: 1.3 }}>
+```
+
+### Check conformance
+
+Before completing component:
+
+- [ ] All colors use design tokens (no hardcoded colors)
+- [ ] All spacing uses scale (p-4, gap-6, etc.)
+- [ ] All typography uses scale (text-xl, font-medium, etc.)
+- [ ] Border radius uses tokens (rounded, rounded-lg, etc.)
+- [ ] Shadows use tokens (shadow, shadow-md, etc.)
+- [ ] Transitions use standard duration (duration-200, etc.)
 
 ## Component creation workflow
 

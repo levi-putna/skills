@@ -61,7 +61,7 @@ Skills invoked: `executing-plans` (which drives `test-driven-development` and `e
 
 ## The harness
 
-Fifteen skills chain into five phases. Review gates sit between each hand-off — the agent stops and waits for your approval unless you say to run through.
+Sixteen skills chain into five phases. Review gates sit between each hand-off — the agent stops and waits for your approval unless you say to run through.
 
 ```
   DESIGN                    CHANGE CONTROL              PLAN                 BUILD                         SHIP
@@ -73,12 +73,12 @@ Fifteen skills chain into five phases. Review gates sit between each hand-off �
   technical-documentation   CHANGELOG.md                       │                   │  (RED → GREEN → REFACTOR)
   docs/designs/             docs/technical/                    ▼                   │
        │                         │                    project-setup*                │
-       │                         │                    component-library*            ├─ component-development
-       │                         ├──── conformance-check ────┤                     │  (create reusable elements)
-       │                         │         (audit)           │                     │
-       │                         └──── reconciling-changes ──┘                     ├─ component-testing
-       │                              (impact report)                              │  (verify elements)
-       │                                    │                                      │
+       │                         │                    design-system*                ├─ component-development
+       │                         │                    component-library*            │  (audit → extend/create → test)
+       │                         ├──── conformance-check ────┤                     │
+       │                         │         (audit)           │                     ├─ component-testing
+       │                         └──── reconciling-changes ──┘                     │  (verify + regression)
+       │                              (impact report)                              │
        │                                    │                                      ▼
        │                                    │                              end-to-end-testing
        │                                    │                                      │
@@ -86,6 +86,7 @@ Fifteen skills chain into five phases. Review gates sit between each hand-off �
                                                     conformance-check (post-build)
 
   * project-setup — greenfield only (scaffold repo before first build)
+  * design-system — once per project (define tokens, standards, component rules)
   * component-library — once per project (set up component infrastructure)
 ```
 
@@ -95,7 +96,7 @@ Fifteen skills chain into five phases. Review gates sit between each hand-off �
 |---|---|---|
 | **Design** | brainstorming, technical-documentation, refining-docs | `docs/designs/`, `docs/technical/` |
 | **Change control** | conformance-check, reconciling-changes | Impact reports, drift audits in `docs/plans/` |
-| **Plan** | planning, project-setup, component-library | Dated TDD task lists in `docs/plans/` |
+| **Plan** | planning, project-setup, design-system, component-library | Dated TDD task lists in `docs/plans/`, design tokens |
 | **Build** | executing-plans, test-driven-development, component-development, component-testing, end-to-end-testing | Working, tested code and reusable components |
 | **Ship** | shipping | Branch, commits, PR |
 
@@ -111,16 +112,20 @@ Fifteen skills chain into five phases. Review gates sit between each hand-off �
 
 **Rule: Never create one-off UI components.** When a feature needs UI elements, the agent must:
 
-1. Identify required elements (buttons, cards, forms, etc.)
-2. Check if they exist in the component library
-3. If missing, invoke **component-development** to create reusable elements
-4. Then integrate those elements into the application
+1. **Check design system** — Verify component follows design tokens and standards
+2. **Audit existing components** — Search for similar components that could be extended
+3. **Decide: extend or create** — Use decision framework from design system
+4. **If extending** — Test backward compatibility, ensure existing usage unaffected
+5. **If creating new** — Document why existing components insufficient
+6. **Build with design tokens** — Use semantic colors, spacing scale, typography tokens
+7. **Test before integrate** — Verify in isolation before using in application
 
 This ensures:
-- All UI elements are reusable and tested in isolation
-- Components are properly documented with stories
-- Visual regression and accessibility are verified before integration
-- No duplicate one-off implementations
+- All UI elements use design system tokens (consistent brand)
+- Components are reusable and tested in isolation
+- No component proliferation (dozens of similar variants)
+- Backward compatibility maintained when extending
+- Visual regression and accessibility verified before integration
 
 ---
 
@@ -144,7 +149,27 @@ Create professional Mermaid diagrams — themed styling, semantic colours, layou
 
 ### UI Component Development
 
-**Core principle:** UI elements are built as reusable components first, never created inline. When executing plans, if new UI elements are needed, the agent must create them through the component development loop before proceeding with integration.
+**Core principle:** UI elements are built as reusable components first, never created inline. Component development follows a strict workflow: **design system** → **audit** → **extend or create** → **test** → **integrate**.
+
+#### [design-system](./skills/design-system/)
+
+Define design foundation: brand identity, design tokens, color palette, typography, spacing, and component standards. Creates the single source of truth for all UI decisions.
+
+|| |
+|---|---|
+| **When** | Once per project (before any UI work); when establishing design standards |
+| **Creates** | Design tokens, color palette, typography scale, component decision framework |
+| **Invoked by** | project-setup (greenfield), or manually before component work |
+| **Hands off to** | component-library |
+| **Prevents** | Component proliferation, inconsistent styling, unclear extension rules |
+
+**Prompt:** *"Define the design system including brand colors, typography, and component standards."*
+
+**Key output:** `docs/design/design-system.md` with:
+- Semantic color tokens (primary, destructive, etc.)
+- Typography and spacing scales
+- Component creation vs. extension guidelines
+- Backward compatibility requirements
 
 #### [component-library](./skills/component-library/)
 
@@ -358,19 +383,25 @@ Pre-flight checks, conventional commits, changelog, PR. Never ships a red or unv
 2. technical-documentation →  docs/technical/ (requirements, architecture, stack, …)
 3. planning (greenfield)  →  docs/plans/2026-06-29-feature.md
 4. project-setup          →  scaffolded repo
-      └─ component-library (if UI needed)  →  Storybook infrastructure
+      └─ design-system (if UI needed)          →  Design tokens, component standards
+      └─ component-library (if UI needed)      →  Storybook infrastructure
 5. executing-plans        →  builds in batches
-      ├─ test-driven-development            per task
-      ├─ component-development              when UI elements needed
-      │    └─ component-testing             verify before integration
-      └─ end-to-end-testing                 when tasks complete
+      ├─ test-driven-development                per task
+      ├─ component-development                  when UI elements needed
+      │    ├─ audit existing components         check for reuse/extension
+      │    ├─ extend or create                  follow design system rules
+      │    └─ component-testing                 verify before integration
+      └─ end-to-end-testing                     when tasks complete
 6. shipping               →  PR
 ```
 
-**Component integration:** If a task in the plan requires UI elements that don't exist:
+**Component integration:** If a task in the plan requires UI elements:
 - `executing-plans` identifies the gap
-- Invokes `component-development` to create reusable elements
-- Invokes `component-testing` to verify
+- Component audit checks for existing similar components
+- Decision: extend existing OR create new (per design system rules)
+- If extending: test backward compatibility
+- If creating: document why existing insufficient
+- `component-testing` verifies before integration
 - Resumes task and integrates the tested elements
 
 ### Brownfield — doc change to deployed delta
@@ -396,17 +427,20 @@ This is the **day-to-day loop** once an app exists. You edit docs; the agent cha
 When working primarily on UI elements:
 
 ```
-1. component-library      →  set up showcase infrastructure (once)
-2. component-development  →  build UserCard with stories
-3. component-testing      →  interaction + visual + a11y tests
-4. component-development  →  build ProductCard with stories
-5. component-testing      →  interaction + visual + a11y tests
-6. (integrate into app)   →  use <UserCard /> and <ProductCard /> in pages
-7. end-to-end-testing     →  verify in context
-8. shipping               →  PR
+1. design-system          →  define tokens, standards, component rules
+2. component-library      →  set up showcase infrastructure (once)
+3. component-development  →  audit → extend or create UserCard with stories
+4. component-testing      →  interaction + visual + a11y tests
+5. component-development  →  audit → extend or create ProductCard with stories
+6. component-testing      →  interaction + visual + a11y tests
+7. (integrate into app)   →  use <UserCard /> and <ProductCard /> in pages
+8. end-to-end-testing     →  verify in context
+9. shipping               →  PR
 ```
 
 **Rule:** Components are always created in isolation before integration. Never build UI inline in pages.
+
+**Audit rule:** Before creating any component, MUST check if similar component exists that could be extended.
 
 ### Skill picker — "I want to…"
 
@@ -419,6 +453,7 @@ When working primarily on UI elements:
 | See what a doc change affects | reconciling-changes |
 | Get a task list to implement | planning |
 | Scaffold a new repo | project-setup |
+| Define design tokens and standards | design-system |
 | Set up component showcase | component-library |
 | Build from a plan | executing-plans (auto-invokes component skills when UI needed) |
 | Build UI components | component-development (auto-invoked by executing-plans) |
@@ -503,7 +538,10 @@ conformance report       REQ-042 ✅ covered
 | Delta-only tasks | planning (delta) covers changed REQs only |
 | Green baseline | executing-plans requires green suite before delta edits |
 | REQ-ID test names | test-driven-development — traceable, auditable |
+| Design system | Single source of truth for all UI decisions, prevents component proliferation |
+| Component audit | MUST check existing components before creating new, document decision |
 | Component-first | No inline UI — component-development creates reusable elements |
+| Backward compatibility | Extensions must not break existing usage, verified by tests |
 | Batch scope check | executing-plans reports out-of-plan file touches |
 | E2e gate | end-to-end-testing verifies real behaviour |
 | Post-build audit | conformance-check catches drift |
@@ -528,6 +566,7 @@ npx @levi-putna/agent-kit@latest add levi-putna/skills --skill technical-documen
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill refining-docs --global
 
 # UI component development
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill design-system --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-library --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-development --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-testing --global
@@ -561,6 +600,7 @@ skills/
     README.md         # Human install guide
   technical-documentation/
   refining-docs/
+  design-system/
   component-library/
   component-development/
   component-testing/
