@@ -200,9 +200,10 @@ Build UI components in isolation following CDD best practices. Creates component
 
 **Integration rule:** When `executing-plans` encounters a task that requires new UI elements, it must:
 1. Pause the current task
-2. Invoke `component-development` to create reusable elements
-3. Invoke `component-testing` to verify elements
-4. Resume task and integrate the new elements
+2. Confirm `design-system` and `component-library` outputs exist
+3. Invoke `component-development` to audit existing components and decide whether to extend or create
+4. Invoke `component-testing` to verify behaviour, accessibility, visual regression, and backwards compatibility
+5. Resume task and integrate the tested element
 
 #### [component-testing](./skills/component-testing/)
 
@@ -236,7 +237,7 @@ Think through fuzzy ideas like a colleague. Surfaces trade-offs, writes a design
 
 #### [technical-documentation](./skills/technical-documentation/)
 
-Turn an approved design into buildable technical docs — requirements with REQ-IDs, architecture, data model, API contracts, NFRs, engineering guidelines.
+Turn an approved design into buildable technical docs — requirements with REQ-IDs, architecture, data model, API contracts, NFRs, UI requirements, and engineering guidelines.
 
 | | |
 |---|---|

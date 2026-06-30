@@ -4,8 +4,9 @@ description: >-
   Scaffold a new project from its technical docs so the TDD build loop can run.
   Use once after planning, before executing-plans — to initialise the repo
   structure, package.json, the node:test runner, tooling, CI, and a seed
-  CLAUDE.md/AGENTS.md. Use when starting a greenfield codebase or when a project
-  has docs but no working skeleton yet.
+  CLAUDE.md/AGENTS.md. For UI projects, also ensure design-system and component
+  library prerequisites are ready. Use when starting a greenfield codebase or
+  when a project has docs but no working skeleton yet.
 ---
 
 # Project Setup
@@ -26,6 +27,7 @@ docs/plans/   scaffolds repo    writes features
 ## Prerequisites
 
 - A technical doc set in `docs/technical/` (from the technical-documentation skill), especially `tech-stack.md`, `architecture.md`, and `engineering-guidelines.md`
+- For UI projects, `docs/technical/ui-requirements.md` should exist. If it does, run or schedule the **design-system** skill before component implementation.
 - If those don't exist, suggest the technical-documentation skill first
 - User consent to create files and install dependencies
 
@@ -102,7 +104,24 @@ test('test runner is wired up', () => {
 
 If no `CLAUDE.md`/`AGENTS.md` exists, generate one from `docs/technical/engineering-guidelines.md` — conventions, the `node:test` commands, structure rules, and the non-negotiable agent rules. This is what keeps later build sessions consistent.
 
-### 6. Verify the skeleton
+### 6. UI foundation (when applicable)
+
+If `docs/technical/ui-requirements.md` exists or the architecture includes pages/screens/components:
+
+1. Confirm whether `docs/design/design-system.md` exists
+   - If missing, pause feature scaffolding and run **design-system** first
+   - If present, read it and summarise the locked design tokens and component rules
+2. Confirm whether component-library infrastructure exists
+   - Storybook config or the project's chosen component showcase
+   - Component folders such as `components/ui`, `components/composed`, `components/patterns`, `components/ai`
+3. If missing, run **component-library** before feature work starts
+4. Seed agent guidance with UI rules:
+   - No one-off inline UI
+   - Use design-system tokens only
+   - Audit existing components before creating new ones
+   - Verify backwards compatibility when extending components
+
+### 7. Verify the skeleton
 
 Prove it works before handing off:
 
@@ -110,10 +129,11 @@ Prove it works before handing off:
 - [ ] `npm test` runs and the smoke test passes
 - [ ] `npm run lint` passes
 - [ ] CI workflow is valid
+- [ ] UI projects have design-system and component-library prerequisites ready or explicitly queued
 
 Report the results plainly. If something fails, fix it here — the build loop assumes a green baseline.
 
-### 7. Commit and hand off
+### 8. Commit and hand off
 
 Commit the skeleton (conventional commit, e.g. `chore: scaffold project`). Then:
 
@@ -126,6 +146,7 @@ Commit the skeleton (conventional commit, e.g. `chore: scaffold project`). Then:
 - **node:test by default** — built-in runner and assertions, no extra framework unless locked
 - **No features** — skeleton only; the TDD loop writes the logic
 - **State your defaults** — every 🤖 choice you fill in is called out for override
+- **UI foundation first** — never hand off UI feature work without design-system and component-library readiness
 
 ## Anti-patterns
 
@@ -134,3 +155,4 @@ Commit the skeleton (conventional commit, e.g. `chore: scaffold project`). Then:
 - Handing off with a red or unrunnable test suite
 - Implementing features "to save time"
 - Committing secrets or real `.env` files
+- Starting UI feature implementation before design tokens, component standards, and component showcase infrastructure exist

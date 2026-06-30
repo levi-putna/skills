@@ -31,8 +31,9 @@ With a design system:
 Before starting:
 
 1. **Gather brand assets** — Logo, brand guidelines, existing design if available
-2. **Check for existing design system** — Read any docs in `docs/design/` or design files
-3. **Understand target platforms** — Web, mobile, accessibility requirements
+2. **Read UI requirements** — If `docs/technical/ui-requirements.md` exists, use it as the primary source of truth
+3. **Check for existing design system** — Read any docs in `docs/design/` or design files
+4. **Understand target platforms** — Web, mobile, accessibility requirements
 
 **Ask the user:**
 - "Do you have existing brand guidelines or a design file (Figma, etc.) to reference?"
@@ -41,7 +42,7 @@ Before starting:
 
 ## Design system structure
 
-Create `docs/design/design-system.md` as the single source of truth.
+Create `docs/design/design-system.md` as the single source of truth. If `docs/technical/ui-requirements.md` exists, every human-locked brand, typography, accessibility, and asset decision must be carried forward without reinterpretation.
 
 See the full template in the skill documentation for:
 - Brand identity (values, voice, tone)
@@ -50,6 +51,22 @@ See the full template in the skill documentation for:
 - Component audit process
 - Accessibility standards
 - Responsive design patterns
+
+## Required source mapping
+
+When creating or updating the design system, include a source mapping table:
+
+```markdown
+## Source mapping
+
+| Design-system decision | Source | Owner |
+|---|---|---|
+| Primary colour token | `docs/technical/ui-requirements.md#color-requirements` | 🔒 |
+| WCAG level | `docs/technical/ui-requirements.md#accessibility` | 🔒 |
+| Spacing scale | Agent choice based on UI requirements | 🤖 |
+```
+
+This makes it clear which design decisions came from human brand guidance and which were agent-filled implementation details.
 
 ## Component Decision Framework
 
@@ -116,6 +133,16 @@ When extending components, MUST verify:
 4. **Document migration if needed**
    - If breaking change unavoidable, document migration path
    - Version the component or provide codemods
+
+## Design governance checks
+
+Before handing off, verify:
+
+- [ ] Every brand/accessibility 🔒 decision from `ui-requirements.md` appears in `docs/design/design-system.md`
+- [ ] No hardcoded implementation tokens are introduced without a semantic name
+- [ ] Component creation vs extension rules are documented
+- [ ] Accessibility baseline includes keyboard, screen reader, contrast, reduced motion, and target size requirements
+- [ ] The design system states how visual regression and component audit decisions are enforced
 
 ## Design Tokens Implementation
 
@@ -185,3 +212,4 @@ If the user wants to set up the component library now, offer to invoke the **com
 - **Accessibility first** — WCAG AA minimum on all components
 - **Brand consistency** — All components use design system tokens
 - **Backward compatibility** — Extensions must not break existing use cases
+- **Traceability** — Design-system decisions trace back to UI requirements or documented agent-discretion choices

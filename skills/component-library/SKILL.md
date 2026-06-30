@@ -44,8 +44,10 @@ Before starting:
 
 1. Check if `package.json` exists — this skill assumes a Next.js/React project
 2. Read `docs/technical/tech-stack.md` if it exists — respect locked (🔒) decisions
-3. Check if Storybook is already installed (`@storybook/react` in dependencies)
-4. Identify existing component directories (typically `components/`, `src/components/`, `app/components/`)
+3. Read `docs/design/design-system.md` if it exists — component previews must use the design tokens and standards from it
+4. If the project has UI but no `docs/design/design-system.md`, run **design-system** before setting up component work
+5. Check if Storybook is already installed (`@storybook/react` in dependencies)
+6. Identify existing component directories (typically `components/`, `src/components/`, `app/components/`)
 
 ## Installation (Storybook path)
 
@@ -249,6 +251,7 @@ All stories must:
 - Include interaction tests for stateful behaviour
 - Pass a11y audits
 - Document props with JSDoc
+- Demonstrate design-system conformance (tokens, typography, spacing, states)
 ```
 
 ## Installation (Custom gallery path)
@@ -434,6 +437,16 @@ If the project uses shadcn/ui (check for `components.json`):
 4. **Use semantic tokens** — Use `bg-primary`, `text-muted-foreground`, not raw colours
 
 Read the composition rules from the shadcn skill if available.
+
+## Design-system integration
+
+The component library is the visible enforcement point for the design system:
+
+- Global Storybook preview must load the same CSS variables/theme tokens as the app
+- Stories should include representative light/dark or theme states when the design system supports them
+- Component categories should match the design-system taxonomy
+- Any new component story should include a note or arg that shows which design-system variants/tokens it uses
+- Visual regression snapshots should protect brand colours, typography, spacing, and component states from drift
 
 ## Vercel AI SDK components
 

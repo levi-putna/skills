@@ -17,14 +17,16 @@ Announce at start: "I'm using the executing-plans skill to implement this plan."
 - A plan file (typically from the planning skill) or an equivalent task list from the user
 - User consent to start implementation
 - Do not begin on `main`/`master` without explicit user approval — use a feature branch when the plan involves git work
+- For UI work, `docs/design/design-system.md` and component-library infrastructure should exist. If they do not, pause and run the **design-system** and/or **component-library** skills before implementing UI tasks.
 
 ## Step 1: Load and review
 
 1. Read the full plan
 2. Scan the codebase areas the plan touches
 3. Review critically — note gaps, wrong paths, missing dependencies, or ambiguous steps
-4. If concerns exist, raise them with the user before writing code
-5. If the plan is sound, create a todo list from the plan tasks and begin
+4. For UI tasks, verify the plan includes component audit decisions, design-system references, and component-testing verification
+5. If concerns exist, raise them with the user before writing code
+6. If the plan is sound, create a todo list from the plan tasks and begin
 
 ### Brownfield baseline (delta plans)
 
@@ -37,13 +39,20 @@ When the plan header says **Mode: Delta**:
 
 ## Step 2: Execute in batches (the build loop)
 
-Work in batches of **3 tasks** (adjust down if tasks are large). Each task is built with the **test-driven-development** skill — that red-green-refactor loop with `node:test` is the inner engine; this skill orchestrates batches and checkpoints around it. For each task:
+Work in batches of **3 tasks** (adjust down if tasks are large). Each task is built with the **test-driven-development** skill — that red-green-refactor loop with `node:test` is the inner engine; this skill orchestrates batches and checkpoints around it. UI tasks also run through the **component-development** and **component-testing** element loop before application integration. For each task:
 
 1. Mark the task in progress
-2. Run the TDD loop: failing test → minimal code → refactor, until the task's tests pass (follow the plan's test/implementation steps; do not skip the "watch it fail" verification)
-3. Run tests and commands exactly as the plan specifies
-4. Mark complete only when verification passes
-5. Commit when the plan says to
+2. If the task requires UI elements:
+   - Confirm the design-system and component-library are available
+   - Audit existing components before creating anything new
+   - Prefer composing or extending existing components over creating new ones
+   - If extending, run existing stories/tests plus visual regression or equivalent snapshot checks to verify backwards compatibility
+   - If creating, document why existing components are insufficient
+   - Run component-testing before integrating the element into the page or feature
+3. Run the TDD loop: failing test → minimal code → refactor, until the task's tests pass (follow the plan's test/implementation steps; do not skip the "watch it fail" verification)
+4. Run tests and commands exactly as the plan specifies
+5. Mark complete only when verification passes
+6. Commit when the plan says to
 
 After each batch, **checkpoint** with the user:
 
@@ -58,6 +67,12 @@ Verification:
 
 Scope check (delta plans):
 - [files touched vs plan file list — flag any out-of-scope edits]
+
+UI/component check (when applicable):
+- [existing components audited]
+- [extend/create decision and rationale]
+- [design-system tokens/standards followed]
+- [backwards compatibility and visual/a11y verification results]
 
 Up next:
 - [next tasks]
@@ -96,6 +111,7 @@ Stop immediately and ask the user when:
 - A file or dependency in the plan does not exist
 - Instructions contradict the codebase or each other
 - You need a decision the plan does not cover
+- A UI task needs a design-system decision, component audit decision, or brand/accessibility requirement that is missing
 - Verification fails twice on the same step
 
 Do not guess past blockers. Do not silently change the plan's approach.
@@ -115,6 +131,7 @@ Minor deviations (typo in path, renamed export) can be fixed inline and noted in
 - Follow the plan's code and commands; do not substitute your own architecture
 - Keep changes minimal per task — no drive-by refactors
 - Match existing project conventions (style, imports, test patterns)
+- For UI, match the design-system tokens and component decision framework; never create one-off inline UI to finish faster
 - Update todos as you go so progress is visible
 - Cite REQ-IDs in commit messages when the plan specifies them (e.g. `feat(export): add CSV export (REQ-055)`)
 - On delta plans: if a test fails outside the current task's REQ scope, stop — do not "fix forward" into frozen areas
@@ -130,10 +147,13 @@ Typical workflow:
 5. **reconciling-changes** — impact report when docs change on brownfield code
 6. **planning** — the plan document (greenfield or delta mode)
 7. **project-setup** — scaffold the repo and wire `node:test` (greenfield only)
-8. **executing-plans** — orchestrate the build (this skill)
+8. **design-system** and **component-library** — establish UI standards and isolated component infrastructure when UI is in scope
+9. **executing-plans** — orchestrate the build (this skill)
    - **test-driven-development** — inner red-green-refactor loop per task
+   - **component-development** — component audit, extend/create decision, isolated UI implementation
+   - **component-testing** — interaction, visual, accessibility, and regression checks for UI elements
    - **end-to-end-testing** — outer verification gate; retriggers the build loop on failure
-9. **conformance-check** — post-build drift audit on delta work
-10. **shipping** — PR and release
+10. **conformance-check** — post-build drift audit on delta work
+11. **shipping** — PR and release
 
 If subagents are available, dispatching one task per subagent with review between tasks is fine. This skill still applies for checkpointing and verification.

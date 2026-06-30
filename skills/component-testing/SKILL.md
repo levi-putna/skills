@@ -32,6 +32,7 @@ This skill focuses on the first three (interaction, visual, accessibility). For 
 1. **Component exists** — Component and story file created (use **component-development** skill)
 2. **Storybook running** — Can view component at http://localhost:6006
 3. **Test runner installed** — Storybook test runner for CI execution
+4. **Design system available** — `docs/design/design-system.md` exists for UI projects; tests should verify token, accessibility, and state requirements from it
 
 If test runner is not installed:
 
@@ -363,6 +364,8 @@ export const AccessibilityCheck: Story = {
 - [ ] Form inputs have associated labels
 - [ ] Error messages are announced to screen readers
 - [ ] Landmark roles are used correctly (`main`, `nav`, `aside`)
+- [ ] Motion respects `prefers-reduced-motion` where animation is present
+- [ ] Touch targets meet the design-system minimum size
 
 **Test keyboard navigation manually:**
 
@@ -678,6 +681,39 @@ export const KeyboardNav: Story = {
   },
 };
 ```
+
+### Extended components
+
+**Focus:** Backwards compatibility and regression safety
+
+When an existing component is extended with new variants, sizes, or optional props:
+
+- Re-run every existing story for that component
+- Add stories for the new variant/state
+- Add visual regression coverage comparing default rendering against the previous baseline
+- Run codebase usage tests for existing props and default behaviour
+- Confirm new props are optional and do not change default rendering
+
+```typescript
+export const DefaultBackwardsCompatibility: Story = {
+  args: {
+    children: 'Existing default',
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    expect(canvas.getByRole('button', { name: /existing default/i })).toBeEnabled();
+  },
+};
+```
+
+### Design-system conformance tests
+
+**Focus:** Token use, theming, and brand consistency
+
+- Verify light/dark or supported theme states
+- Snapshot typography, spacing, and state variants
+- Ensure semantic states exist for success, warning, error, disabled, loading, empty, and focus where applicable
+- Fail or flag hardcoded colours and styles during lint/review when tooling supports it
 
 ### Form components (Input, Select, Checkbox)
 

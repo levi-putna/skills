@@ -4,7 +4,7 @@ description: >-
   Turn an approved design into a production-ready set of technical documents an
   AI agent can build from and a human can review. Use after brainstorming, before
   planning, when starting a new project or feature that needs architecture, data
-  model, tech-stack decisions, or engineering guidelines written down.
+  model, tech-stack decisions, UI requirements, or engineering guidelines written down.
 ---
 
 # Technical Documentation
@@ -131,6 +131,10 @@ Ask the user to read the files on disk:
 When approved, suggest the next step based on context:
 
 > "Docs approved. Want me to turn these into an implementation plan with the planning skill?"
+
+For projects with UI, if `ui-requirements.md` exists, suggest **design-system** before planning implementation:
+
+> "UI requirements are approved. Want me to run the design-system skill next so the brand, tokens, typography, spacing, and component standards are locked before component work starts?"
 
 For brownfield projects with existing code, suggest **conformance-check** first, then planning when ready.
 
@@ -302,12 +306,190 @@ Rules the AI must follow on every change. This section seeds CLAUDE.md / AGENTS.
 - Run the full test suite before and after each batch; unrelated failures block progress
 ```
 
+### ui-requirements.md
+
+Create this for any project with visual UI, components, pages, mobile screens, or a design system. This is the hand-off into the **design-system** skill.
+
+```markdown
+# <Product> — UI Requirements
+
+> These requirements define the design-system inputs. The design-system skill converts them into design tokens, component standards, and audit rules.
+
+## UI/UX requirements
+
+### Target platforms
+- [ ] Web desktop
+- [ ] Web mobile
+- [ ] Tablet
+- [ ] Native mobile
+
+**Primary platform:** <e.g. Web desktop-first, mobile-responsive>
+
+### Accessibility
+**Standard:** WCAG 2.1 AA | WCAG 2.2 AA | WCAG AAA
+
+**Must support:**
+- [ ] Screen readers
+- [ ] Keyboard navigation
+- [ ] High contrast mode
+- [ ] Reduced motion
+- [ ] Text scaling up to 200%
+
+### Browser/device support
+| Target | Requirement |
+|---|---|
+| Chrome/Edge | <version or policy> |
+| Firefox | <version or policy> |
+| Safari | <version or policy> |
+| Mobile | <iOS/Android requirements> |
+
+## Brand identity
+
+### Brand values
+| Value | Meaning for UI |
+|---|---|
+| <e.g. Trustworthy> | <how it should feel visually> |
+
+### Voice and tone
+- **Overall voice:** <e.g. Professional yet friendly>
+- **Error states:** <e.g. Empathetic and helpful>
+- **Success states:** <e.g. Encouraging and concise>
+- **Marketing/product copy:** <e.g. Clear and confident>
+
+### Visual style direction
+- **Style:** <Minimalist | bold | corporate | playful | other>
+- **Mood:** <Calm | energetic | serious | approachable | other>
+
+## Colour requirements
+
+### Brand colours
+| Role | Value / description | Owner |
+|---|---|---|
+| Primary brand colour | <hex/HSL or description> | 🔒 |
+| Secondary brand colour | <hex/HSL or description> | 🔒 / 🤖 |
+| Accent colour | <hex/HSL or description> | 🔒 / 🤖 |
+
+### Semantic colours
+| Role | Requirement |
+|---|---|
+| Success | <e.g. Green, clear but calm> |
+| Error/destructive | <e.g. Red, clear but not alarming> |
+| Warning | <e.g. Amber/orange> |
+| Info | <e.g. Blue> |
+
+### Theme support
+- [ ] Light mode
+- [ ] Dark mode
+- [ ] System preference
+
+**Default:** <Light | Dark | System>
+
+## Typography requirements
+
+### Font direction
+- **Heading font:** <specific font or personality>
+- **Body font:** <specific font or personality>
+- **Monospace font:** <if needed>
+- **Font loading policy:** <system fonts only | web fonts allowed>
+
+### Readability
+- **Minimum body size:** <e.g. 16px>
+- **Body line-height:** <e.g. 1.5>
+- **Max reading line length:** <e.g. 75 characters>
+
+## Layout and spacing
+
+### Layout style
+- [ ] Spacious
+- [ ] Compact
+- [ ] Balanced
+
+### Grid and spacing
+- [ ] 4px spacing grid
+- [ ] 8px spacing grid
+- [ ] 12-column layout grid
+- [ ] Other: <specify>
+
+### Responsive approach
+**Approach:** Mobile-first | Desktop-first
+
+**Key breakpoints:** <e.g. 640px, 768px, 1024px>
+
+## Component style requirements
+
+| Component family | Requirement |
+|---|---|
+| Buttons | <shape, sizes, hover/focus behaviour> |
+| Forms | <input style, validation timing, error display> |
+| Cards | <elevation, border, spacing> |
+| Navigation | <top nav, side nav, mobile behaviour> |
+| Feedback | <toast, alert, inline message patterns> |
+| Data display | <tables, lists, charts, density> |
+
+## Interaction patterns
+
+- **Transitions:** <none | subtle 200ms | rich animation>
+- **Loading states:** <spinner | skeleton | progress | other>
+- **Empty states:** <icon + copy + CTA | illustration | text only>
+- **Motion accessibility:** Must respect `prefers-reduced-motion`: yes | no
+
+## Existing design assets
+
+| Asset | Location / status | Owner |
+|---|---|---|
+| Figma/design file | <link or none> | 🔒 |
+| Brand guidelines | <link/path or none> | 🔒 |
+| Logo/assets | <link/path or none> | 🔒 |
+| Base design system | <shadcn/ui | Material UI | custom | other> | 🔒 / 🤖 |
+| Icon library | <Lucide React | Heroicons | custom | other> | 🔒 / 🤖 |
+
+## Component requirements
+
+### Required primitives
+- [ ] Button
+- [ ] Input
+- [ ] Select/combobox
+- [ ] Checkbox/radio
+- [ ] Card
+- [ ] Dialog/sheet/drawer
+- [ ] Toast/alert
+
+### Required composed components and patterns
+- [ ] Data table
+- [ ] Dashboard header
+- [ ] Navigation shell
+- [ ] Auth form
+- [ ] Empty states
+- [ ] Loading states
+- [ ] AI/tool invocation components
+
+## Decision ownership
+| Decision | Owner |
+|---|---|
+| Brand colours, logo, existing brand guidelines | 🔒 human-locked |
+| Accessibility standard | 🔒 human-locked |
+| Specific fonts, if provided | 🔒 human-locked |
+| Semantic token mapping | 🤖 agent-discretion unless specified |
+| Spacing scale, radii, shadows | 🤖 agent-discretion unless specified |
+| Component variants and sizes | 🤖 agent-discretion unless specified |
+
+## Hand-off to design-system
+
+The design-system skill must use this document to create:
+1. Design tokens
+2. Typography scale
+3. Spacing, radius, shadow, and motion standards
+4. Component decision framework
+5. Backwards compatibility and component audit rules
+```
+
 ## Self-check before final review
 
 - Every doc reads standalone — no reliance on chat history
 - No ❓ decisions remain; every tech choice is 🔒 or 🤖
 - Diagrams render (valid Mermaid) and each has a caption
 - NFR targets are measurable
+- UI projects have `ui-requirements.md`, and its human-locked brand/accessibility decisions are resolved
 - Docs are internally consistent (stack, entities, endpoints all line up)
 - No TBD/TODO/placeholder text
 
