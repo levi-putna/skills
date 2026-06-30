@@ -32,6 +32,7 @@ If the user asks to implement doc changes on brownfield code without an impact r
 
 - An approved design spec, impact report, or clear requirements from the user
 - If a technical doc set exists (`docs/technical/` from the technical-documentation skill), read it first — it carries the locked tech-stack decisions, architecture, and constraints the plan must respect
+- For UI work, read `docs/technical/ui-requirements.md` and `docs/design/design-system.md` if they exist. If UI work is in scope but these docs are missing, add setup tasks for **design-system** and **component-library** before component or page implementation.
 - If requirements are still fuzzy, use the brainstorming skill first
 
 Save plans to:
@@ -49,6 +50,21 @@ Before writing tasks, map files to create or modify and what each one owns. Lock
 - Files that change together live together
 - Follow existing codebase patterns; do not restructure unrelated code
 - If a file you must touch is already unwieldy, include a focused split in the plan
+
+### UI/component scope check
+
+For any task that touches pages, screens, visual elements, forms, dashboards, navigation, or component files:
+
+- Add a **ui-ux-best-practices** review step for composed views, dashboards, forms, landing pages, and complex workflows
+- Define the primary user task and primary action before listing components
+- Identify required UI elements and map them to existing components where possible
+- Add an explicit **component audit** step before creating new components
+- Prefer extending existing components with variants, sizes, composition, or optional props
+- If extending an existing component, include backwards compatibility and visual regression verification
+- If creating a new component, require written justification explaining why existing components are insufficient
+- Ensure all UI tasks reference design-system tokens and standards; no hardcoded colours, spacing, typography, shadows, or radii
+- Include Storybook/component-library work before application integration
+- Include responsive viewports, realistic content, loading/empty/error states, and anti-slop checks in verification
 
 ## Task sizing
 
@@ -113,6 +129,16 @@ For **delta** plans, add after Constraints:
 
 **Produces:** [Functions, exports, or behaviour later tasks rely on — names and signatures]
 
+**UI/component decision (when applicable):**
+- Primary user task: `[what the user is trying to do]`
+- Primary action: `[main action, or "none" for read-only views]`
+- UI/UX review: `[ui-ux-best-practices required? yes/no and why]`
+- Existing components audited: `[component names or "none exist"]`
+- Decision: Extend existing | Create new | Compose existing
+- Reason: `[why this avoids one-off UI and component duplication]`
+- Design-system references: `[tokens, variants, accessibility rules]`
+- Backwards compatibility: `[required checks if extending]`
+
 - [ ] **Step 1: Write the failing test**
 
 ```js
@@ -165,6 +191,7 @@ After the full plan is written:
 2. **Placeholder scan** — fix any vague steps
 3. **Name consistency** — function names, paths, and types match across tasks
 4. **Order** — no task depends on something not built yet
+5. **UI governance** — UI tasks include primary user task, primary action, design-system prerequisites, component audit decisions, component tests, visual/a11y checks, anti-slop review, responsive checks, and backwards compatibility checks for extensions
 
 Fix issues inline before presenting the plan.
 
@@ -184,3 +211,4 @@ If executing in the same session, invoke the executing-plans skill. Do not start
 - **DRY and YAGNI** — only what the spec requires
 - **Frequent commits** — one logical commit per task when possible
 - **Exact paths** — no "the utils folder" without a full path
+- **Component-first UI** — pages use reusable components; plans must not create one-off UI inline

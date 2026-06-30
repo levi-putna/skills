@@ -61,7 +61,7 @@ Skills invoked: `executing-plans` (which drives `test-driven-development` and `e
 
 ## The harness
 
-Twelve skills chain into four phases. Review gates sit between each hand-off — the agent stops and waits for your approval unless you say to run through.
+Seventeen skills chain into five phases. Review gates sit between each hand-off — the agent stops and waits for your approval unless you say to run through.
 
 ```
   DESIGN                    CHANGE CONTROL              PLAN                 BUILD                         SHIP
@@ -69,19 +69,27 @@ Twelve skills chain into four phases. Review gates sit between each hand-off —
 
   brainstorming             refining-docs                                      executing-plans               shipping
        │                         │                         planning                 │
-       ▼                         ▼                              │            test-driven-development
-  technical-documentation   CHANGELOG.md                       │            (RED → GREEN → REFACTOR)
-  docs/designs/             docs/technical/                    ▼                    │
-       │                         │                    project-setup*                 ▼
-       │                         ├──── conformance-check ────┤              end-to-end-testing
-       │                         │         (audit)           │                    │
-       │                         └──── reconciling-changes ──┘                    │
-       │                              (impact report)                             │
-       │                                    │                                     │
-       └────────────────────────────────────┴─────────────────────────────────────┘
+       ▼                         ▼                              │                   ├─ test-driven-development
+  technical-documentation   CHANGELOG.md                       │                   │  (RED → GREEN → REFACTOR)
+  docs/designs/             docs/technical/                    ▼                   │
+       │                         │                    project-setup*                │
+       │                         │                    design-system*                ├─ ui-ux-best-practices
+       │                         │                    component-library*            │  (clean UX review)
+       │                         │                                                   ├─ component-development
+       │                         │                                                   │  (audit → extend/create → test)
+       │                         ├──── conformance-check ────┤                     │
+       │                         │         (audit)           │                     ├─ component-testing
+       │                         └──── reconciling-changes ──┘                     │  (verify + regression)
+       │                              (impact report)                              │
+       │                                    │                                      ▼
+       │                                    │                              end-to-end-testing
+       │                                    │                                      │
+       └────────────────────────────────────┴──────────────────────────────────────┘
                                                     conformance-check (post-build)
 
   * project-setup — greenfield only (scaffold repo before first build)
+  * design-system — once per project (define tokens, standards, component rules)
+  * component-library — once per project (set up component infrastructure)
 ```
 
 ### Phase summary
@@ -90,15 +98,38 @@ Twelve skills chain into four phases. Review gates sit between each hand-off —
 |---|---|---|
 | **Design** | brainstorming, technical-documentation, refining-docs | `docs/designs/`, `docs/technical/` |
 | **Change control** | conformance-check, reconciling-changes | Impact reports, drift audits in `docs/plans/` |
-| **Plan** | planning, project-setup | Dated TDD task lists in `docs/plans/` |
-| **Build** | executing-plans, test-driven-development, end-to-end-testing | Working, tested code |
+| **Plan** | planning, project-setup, design-system, component-library | Dated TDD task lists in `docs/plans/`, design tokens |
+| **Build** | executing-plans, test-driven-development, ui-ux-best-practices, component-development, component-testing, end-to-end-testing | Working, tested code and reusable components |
 | **Ship** | shipping | Branch, commits, PR |
 
-### The two build loops
+### The build loops
 
 **Inner loop** — `test-driven-development`: one requirement at a time, failing test first, minimal code, refactor.
 
+**UX review loop** — `ui-ux-best-practices`: when screens or composed views are designed, review hierarchy, whitespace, responsiveness, accessibility, user flow, and AI-generated UI antipatterns.
+
+**Element loop** — `component-development` + `component-testing`: when UI elements are needed, build them as reusable components in isolation first, then integrate.
+
 **Outer loop** — `end-to-end-testing`: run the real app against acceptance criteria; on failure, file fix tasks and send control back to the inner loop.
+
+### Component-first development
+
+**Rule: Never create one-off UI components.** When a feature needs UI elements, the agent must:
+
+1. **Check design system** — Verify component follows design tokens and standards
+2. **Audit existing components** — Search for similar components that could be extended
+3. **Decide: extend or create** — Use decision framework from design system
+4. **If extending** — Test backward compatibility, ensure existing usage unaffected
+5. **If creating new** — Document why existing components insufficient
+6. **Build with design tokens** — Use semantic colors, spacing scale, typography tokens
+7. **Test before integrate** — Verify in isolation before using in application
+
+This ensures:
+- All UI elements use design system tokens (consistent brand)
+- Components are reusable and tested in isolation
+- No component proliferation (dozens of similar variants)
+- Backward compatibility maintained when extending
+- Visual regression and accessibility verified before integration
 
 ---
 
@@ -120,6 +151,93 @@ Create professional Mermaid diagrams — themed styling, semantic colours, layou
 
 ---
 
+### UI Component Development
+
+**Core principle:** UI elements are built as reusable components first, never created inline. Component development follows a strict workflow: **design system** → **audit** → **extend or create** → **test** → **integrate**.
+
+#### [ui-ux-best-practices](./skills/ui-ux-best-practices/)
+
+Review and guide UI/UX work for clean, professional, low-noise interfaces. Checks hierarchy, whitespace, responsive behaviour, accessibility, user flow, and common AI-generated UI antipatterns.
+
+|| |
+|---|---|
+| **When** | Before building pages/views; after composing components into screens; before shipping UI-heavy work |
+| **Creates** | UI/UX review findings, anti-slop checks, required revisions |
+| **Invoked by** | planning and executing-plans for UI-heavy views, or manually during design review |
+| **Prevents** | Busy/noisy UI, generic AI slop, weak task flow, poor responsive behaviour |
+
+**Prompt:** *"Review this dashboard for clean UI/UX, whitespace, responsive design, and AI-generated UI antipatterns."*
+
+#### [design-system](./skills/design-system/)
+
+Define design foundation: brand identity, design tokens, color palette, typography, spacing, and component standards. Creates the single source of truth for all UI decisions.
+
+|| |
+|---|---|
+| **When** | Once per project (before any UI work); when establishing design standards |
+| **Creates** | Design tokens, color palette, typography scale, component decision framework |
+| **Invoked by** | project-setup (greenfield), or manually before component work |
+| **Hands off to** | component-library |
+| **Prevents** | Component proliferation, inconsistent styling, unclear extension rules |
+
+**Prompt:** *"Define the design system including brand colors, typography, and component standards."*
+
+**Key output:** `docs/design/design-system.md` with:
+- Semantic color tokens (primary, destructive, etc.)
+- Typography and spacing scales
+- Component creation vs. extension guidelines
+- Backward compatibility requirements
+
+#### [component-library](./skills/component-library/)
+
+Set up component library showcase infrastructure with Storybook 8 or custom in-app gallery. Creates the foundation for component-driven development.
+
+|| |
+|---|---|
+| **When** | Once per project (greenfield); before first UI component |
+| **Creates** | Storybook config, category structure, documentation |
+| **Invoked by** | project-setup (greenfield), or manually when needed |
+| **Hands off to** | component-development |
+
+**Prompt:** *"Set up a component library showcase for this project."*
+
+#### [component-development](./skills/component-development/)
+
+Build UI components in isolation following CDD best practices. Creates components with stories, variants, interaction tests, and documentation.
+
+|| |
+|---|---|
+| **When** | Any time UI elements are needed; invoked during executing-plans when plans reference new components |
+| **Creates** | Component + story file + tests in `components/` |
+| **Follows** | shadcn/ui composition patterns, Vercel AI SDK patterns |
+| **Invoked by** | executing-plans (when UI elements needed), or manually |
+| **Hands off to** | component-testing (verification), then back to calling skill |
+
+**Prompt:** *"Create a UserCard component with avatar, name, role, and expand/collapse."*
+
+**Integration rule:** When `executing-plans` encounters a task that requires new UI elements, it must:
+1. Pause the current task
+2. Confirm `design-system` and `component-library` outputs exist
+3. Invoke `component-development` to audit existing components and decide whether to extend or create
+4. Invoke `component-testing` to verify behaviour, accessibility, visual regression, and backwards compatibility
+5. Resume task and integrate the tested element
+
+#### [component-testing](./skills/component-testing/)
+
+Add comprehensive testing to components: interaction tests, visual regression, accessibility audits, and unit tests.
+
+|| |
+|---|---|
+| **When** | After component-development (before integration) |
+| **Creates** | Interaction tests, visual regression config, unit tests, CI setup |
+| **Verifies** | User behaviour, visual appearance, WCAG compliance |
+| **Invoked by** | component-development (after element created), or manually |
+| **Hands off to** | Calling skill (e.g., executing-plans) or end-to-end-testing |
+
+**Prompt:** *"Add comprehensive tests to the UserCard component."*
+
+---
+
 ### Design and documentation
 
 #### [brainstorming](./skills/brainstorming/)
@@ -136,7 +254,7 @@ Think through fuzzy ideas like a colleague. Surfaces trade-offs, writes a design
 
 #### [technical-documentation](./skills/technical-documentation/)
 
-Turn an approved design into buildable technical docs — requirements with REQ-IDs, architecture, data model, API contracts, NFRs, engineering guidelines.
+Turn an approved design into buildable technical docs — requirements with REQ-IDs, architecture, data model, API contracts, NFRs, UI requirements, and engineering guidelines.
 
 | | |
 |---|---|
@@ -222,15 +340,22 @@ Scaffold a greenfield repo from technical docs — structure, `package.json`, `n
 
 #### [executing-plans](./skills/executing-plans/)
 
-Orchestrator. Loads a plan, works in batches of ~3 tasks, checkpoints with you, enforces scope on delta work.
+Orchestrator. Loads a plan, works in batches of ~3 tasks, checkpoints with you, enforces scope on delta work. **Automatically invokes component-development when tasks require new UI elements.**
 
 | | |
 |---|---|
 | **When** | A plan exists and you're ready to build |
-| **Drives** | test-driven-development (per task), end-to-end-testing (when tasks done), conformance-check (post-build on deltas) |
+| **Drives** | test-driven-development (per task), component-development (when UI elements needed), component-testing (verify elements), end-to-end-testing (when tasks done), conformance-check (post-build on deltas) |
 | **Hands off to** | shipping |
 
 **Prompt:** *"Execute docs/plans/2026-06-29-export.md — checkpoint after each batch."*
+
+**Component-first integration:** When a task requires UI elements:
+1. Check if component exists in `components/`
+2. If missing, pause task and invoke **component-development**
+3. Invoke **component-testing** to verify
+4. Resume task and integrate tested elements
+5. Never create one-off UI components inline
 
 #### [test-driven-development](./skills/test-driven-development/)
 
@@ -276,11 +401,27 @@ Pre-flight checks, conventional commits, changelog, PR. Never ships a red or unv
 2. technical-documentation →  docs/technical/ (requirements, architecture, stack, …)
 3. planning (greenfield)  →  docs/plans/2026-06-29-feature.md
 4. project-setup          →  scaffolded repo
+      └─ design-system (if UI needed)          →  Design tokens, component standards
+      └─ component-library (if UI needed)      →  Storybook infrastructure
 5. executing-plans        →  builds in batches
-      └─ test-driven-development   per task
-      └─ end-to-end-testing         when tasks complete
+      ├─ test-driven-development                per task
+      ├─ ui-ux-best-practices                   review composed views and flows
+      ├─ component-development                  when UI elements needed
+      │    ├─ audit existing components         check for reuse/extension
+      │    ├─ extend or create                  follow design system rules
+      │    └─ component-testing                 verify before integration
+      └─ end-to-end-testing                     when tasks complete
 6. shipping               →  PR
 ```
+
+**Component integration:** If a task in the plan requires UI elements:
+- `executing-plans` identifies the gap
+- Component audit checks for existing similar components
+- Decision: extend existing OR create new (per design system rules)
+- If extending: test backward compatibility
+- If creating: document why existing insufficient
+- `component-testing` verifies before integration
+- Resumes task and integrates the tested elements
 
 ### Brownfield — doc change to deployed delta
 
@@ -292,11 +433,35 @@ This is the **day-to-day loop** once an app exists. You edit docs; the agent cha
 3. reconciling-changes    →  impact report + frozen scope  ✋ approve
 4. planning (delta)       →  tasks for changed REQ-IDs only  ✋ approve
 5. executing-plans        →  baseline tests green first; surgical edits
-      └─ test-driven-development
-      └─ end-to-end-testing
-      └─ conformance-check  post-build audit
+      ├─ test-driven-development
+      ├─ component-development              when new UI elements needed
+      │    └─ component-testing             verify before integration
+      ├─ end-to-end-testing
+      └─ conformance-check                  post-build audit
 6. shipping               →  PR
 ```
+
+### UI-focused workflow — building components
+
+When working primarily on UI elements:
+
+```
+1. design-system          →  define tokens, standards, component rules
+2. ui-ux-best-practices   →  review target flow for hierarchy, clarity, and anti-slop risks
+3. component-library      →  set up showcase infrastructure (once)
+4. component-development  →  audit → extend or create UserCard with stories
+5. component-testing      →  interaction + visual + a11y tests
+6. component-development  →  audit → extend or create ProductCard with stories
+7. component-testing      →  interaction + visual + a11y tests
+8. ui-ux-best-practices   →  review composed page/view before final integration
+9. (integrate into app)   →  use <UserCard /> and <ProductCard /> in pages
+10. end-to-end-testing    →  verify in context
+11. shipping              →  PR
+```
+
+**Rule:** Components are always created in isolation before integration. Never build UI inline in pages.
+
+**Audit rule:** Before creating any component, MUST check if similar component exists that could be extended.
 
 ### Skill picker — "I want to…"
 
@@ -309,7 +474,12 @@ This is the **day-to-day loop** once an app exists. You edit docs; the agent cha
 | See what a doc change affects | reconciling-changes |
 | Get a task list to implement | planning |
 | Scaffold a new repo | project-setup |
-| Build from a plan | executing-plans |
+| Define design tokens and standards | design-system |
+| Review UI/UX quality and anti-slop risks | ui-ux-best-practices |
+| Set up component showcase | component-library |
+| Build from a plan | executing-plans (auto-invokes component skills when UI needed) |
+| Build UI components | component-development (auto-invoked by executing-plans) |
+| Test UI components | component-testing (auto-invoked after component-development) |
 | Ship verified work | shipping |
 | Improve prose (any context) | general-writing |
 | Draw or polish Mermaid diagrams | mermaid-diagrams |
@@ -390,6 +560,10 @@ conformance report       REQ-042 ✅ covered
 | Delta-only tasks | planning (delta) covers changed REQs only |
 | Green baseline | executing-plans requires green suite before delta edits |
 | REQ-ID test names | test-driven-development — traceable, auditable |
+| Design system | Single source of truth for all UI decisions, prevents component proliferation |
+| Component audit | MUST check existing components before creating new, document decision |
+| Component-first | No inline UI — component-development creates reusable elements |
+| Backward compatibility | Extensions must not break existing usage, verified by tests |
 | Batch scope check | executing-plans reports out-of-plan file touches |
 | E2e gate | end-to-end-testing verifies real behaviour |
 | Post-build audit | conformance-check catches drift |
@@ -413,6 +587,13 @@ npx @levi-putna/agent-kit@latest add levi-putna/skills --skill brainstorming --g
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill technical-documentation --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill refining-docs --global
 
+# UI component development
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill design-system --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill ui-ux-best-practices --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-library --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-development --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-testing --global
+
 # Change control
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill conformance-check --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill reconciling-changes --global
@@ -422,7 +603,7 @@ npx @levi-putna/agent-kit@latest add levi-putna/skills --skill planning --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill project-setup --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill executing-plans --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill test-driven-development --global
-npx @levi-putna/agent-kit@latest add levi-putna/skills --skill end-to-end-testing --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill end-to-e nd-testing --global
 
 # Ship & utility
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill shipping --global
@@ -442,6 +623,11 @@ skills/
     README.md         # Human install guide
   technical-documentation/
   refining-docs/
+  design-system/
+  ui-ux-best-practices/
+  component-library/
+  component-development/
+  component-testing/
   conformance-check/
   reconciling-changes/
   planning/
