@@ -939,6 +939,7 @@ When component is complete:
 > - View in Storybook: http://localhost:6006/?path=/story/[path]
 >
 > Next steps:
+> - Use **ui-element-best-practices** to check this element type against Laws-of-UX-backed rules (hit targets, hierarchy, states)
 > - Use **component-testing** skill to add visual regression tests
 > - Import into your application: `import { ComponentName } from '@/components/[category]/[name]'`"
 
