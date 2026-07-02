@@ -61,7 +61,7 @@ Skills invoked: `executing-plans` (which drives `test-driven-development` and `e
 
 ## The harness
 
-Seventeen skills chain into five phases. Review gates sit between each hand-off — the agent stops and waits for your approval unless you say to run through.
+Eighteen skills chain into five phases. Review gates sit between each hand-off — the agent stops and waits for your approval unless you say to run through.
 
 ```
   DESIGN                    CHANGE CONTROL              PLAN                 BUILD                         SHIP
@@ -99,7 +99,7 @@ Seventeen skills chain into five phases. Review gates sit between each hand-off 
 | **Design** | brainstorming, technical-documentation, refining-docs | `docs/designs/`, `docs/technical/` |
 | **Change control** | conformance-check, reconciling-changes | Impact reports, drift audits in `docs/plans/` |
 | **Plan** | planning, project-setup, design-system, component-library | Dated TDD task lists in `docs/plans/`, design tokens |
-| **Build** | executing-plans, test-driven-development, ui-ux-best-practices, component-development, component-testing, end-to-end-testing | Working, tested code and reusable components |
+| **Build** | executing-plans, test-driven-development, ui-ux-best-practices, ui-element-best-practices, component-development, component-testing, end-to-end-testing | Working, tested code and reusable components |
 | **Ship** | shipping | Branch, commits, PR |
 
 ### The build loops
@@ -167,6 +167,19 @@ Review and guide UI/UX work for clean, professional, low-noise interfaces. Check
 | **Prevents** | Busy/noisy UI, generic AI slop, weak task flow, poor responsive behaviour |
 
 **Prompt:** *"Review this dashboard for clean UI/UX, whitespace, responsive design, and AI-generated UI antipatterns."*
+
+#### [ui-element-best-practices](./skills/ui-element-best-practices/)
+
+Element-level UX best practices — buttons, forms, navigation, modals, cards, tables, empty/loading/error states, notifications, tooltips — each grounded in a named Law of UX (Fitts's, Hick's, Jakob's, Miller's, and others) rather than a style opinion.
+
+|| |
+|---|---|
+| **When** | Building or reviewing a single element, before or during `component-development` |
+| **Creates** | Element-level review findings citing the specific UX law violated |
+| **Invoked by** | component-development (per element), or manually during element review |
+| **Prevents** | Undersized tap targets, competing CTAs, unclear modal exits, card soup, notification fatigue, hover-only affordances |
+
+**Prompt:** *"Review this modal component against UI element best practices."*
 
 #### [design-system](./skills/design-system/)
 
@@ -450,13 +463,15 @@ When working primarily on UI elements:
 2. ui-ux-best-practices   →  review target flow for hierarchy, clarity, and anti-slop risks
 3. component-library      →  set up showcase infrastructure (once)
 4. component-development  →  audit → extend or create UserCard with stories
-5. component-testing      →  interaction + visual + a11y tests
-6. component-development  →  audit → extend or create ProductCard with stories
-7. component-testing      →  interaction + visual + a11y tests
-8. ui-ux-best-practices   →  review composed page/view before final integration
-9. (integrate into app)   →  use <UserCard /> and <ProductCard /> in pages
-10. end-to-end-testing    →  verify in context
-11. shipping              →  PR
+5. ui-element-best-practices → check UserCard against element-level UX laws
+6. component-testing      →  interaction + visual + a11y tests
+7. component-development  →  audit → extend or create ProductCard with stories
+8. ui-element-best-practices → check ProductCard against element-level UX laws
+9. component-testing      →  interaction + visual + a11y tests
+10. ui-ux-best-practices   →  review composed page/view before final integration
+11. (integrate into app)   →  use <UserCard /> and <ProductCard /> in pages
+12. end-to-end-testing    →  verify in context
+13. shipping              →  PR
 ```
 
 **Rule:** Components are always created in isolation before integration. Never build UI inline in pages.
@@ -476,6 +491,7 @@ When working primarily on UI elements:
 | Scaffold a new repo | project-setup |
 | Define design tokens and standards | design-system |
 | Review UI/UX quality and anti-slop risks | ui-ux-best-practices |
+| Check a single element against UX-law best practices | ui-element-best-practices |
 | Set up component showcase | component-library |
 | Build from a plan | executing-plans (auto-invokes component skills when UI needed) |
 | Build UI components | component-development (auto-invoked by executing-plans) |
@@ -590,6 +606,7 @@ npx @levi-putna/agent-kit@latest add levi-putna/skills --skill refining-docs --g
 # UI component development
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill design-system --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill ui-ux-best-practices --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill ui-element-best-practices --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-library --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-development --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-testing --global
@@ -625,6 +642,7 @@ skills/
   refining-docs/
   design-system/
   ui-ux-best-practices/
+  ui-element-best-practices/
   component-library/
   component-development/
   component-testing/
