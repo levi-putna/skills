@@ -99,7 +99,7 @@ Eighteen skills chain into five phases. Review gates sit between each hand-off �
 | **Design** | brainstorming, technical-documentation, refining-docs | `docs/designs/`, `docs/technical/` |
 | **Change control** | conformance-check, reconciling-changes | Impact reports, drift audits in `docs/plans/` |
 | **Plan** | planning, project-setup, design-system, component-library | Dated TDD task lists in `docs/plans/`, design tokens |
-| **Build** | executing-plans, test-driven-development, ui-ux-best-practices, ui-element-best-practices, component-development, component-testing, end-to-end-testing | Working, tested code and reusable components |
+| **Build** | executing-plans, test-driven-development, ui-ux-best-practices, ui-element-best-practices, ui-design-laws, component-development, component-testing, end-to-end-testing | Working, tested code and reusable components |
 | **Ship** | shipping | Branch, commits, PR |
 
 ### The build loops
@@ -180,6 +180,19 @@ Element-level UX best practices — buttons, forms, navigation, modals, cards, t
 | **Prevents** | Undersized tap targets, competing CTAs, unclear modal exits, card soup, notification fatigue, hover-only affordances |
 
 **Prompt:** *"Review this modal component against UI element best practices."*
+
+#### [ui-design-laws](./skills/ui-design-laws/)
+
+Law-first checklist of established UI/UX design laws (Fitts's, Hick's, Jakob's, Miller's, Gestalt grouping principles, Tesler's, and others). Where `ui-element-best-practices` starts from the element and looks up the laws, this skill starts from the law and sweeps every element against it — a fast pre-flight pass or a way to cite a mechanism instead of a style opinion.
+
+|| |
+|---|---|
+| **When** | Before/during building any element, as a design constraint; or as a fast checklist pass ahead of `ui-element-best-practices` |
+| **Creates** | Law-by-law review findings (Grouping & perception, Attention & memory, Interaction cost, Motivation & complexity) |
+| **Invoked by** | component-development (quick pass), ui-ux-best-practices (to name a mechanism), or manually |
+| **Prevents** | Ungrounded "looks off" design opinions; missed grouping, hierarchy, or interaction-cost issues |
+
+**Prompt:** *"Check this settings screen against the UI design laws, starting with grouping and perception."*
 
 #### [design-system](./skills/design-system/)
 
@@ -492,6 +505,7 @@ When working primarily on UI elements:
 | Define design tokens and standards | design-system |
 | Review UI/UX quality and anti-slop risks | ui-ux-best-practices |
 | Check a single element against UX-law best practices | ui-element-best-practices |
+| Sweep a screen or element against a specific design law | ui-design-laws |
 | Set up component showcase | component-library |
 | Build from a plan | executing-plans (auto-invokes component skills when UI needed) |
 | Build UI components | component-development (auto-invoked by executing-plans) |
@@ -607,6 +621,7 @@ npx @levi-putna/agent-kit@latest add levi-putna/skills --skill refining-docs --g
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill design-system --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill ui-ux-best-practices --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill ui-element-best-practices --global
+npx @levi-putna/agent-kit@latest add levi-putna/skills --skill ui-design-laws --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-library --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-development --global
 npx @levi-putna/agent-kit@latest add levi-putna/skills --skill component-testing --global
@@ -643,6 +658,7 @@ skills/
   design-system/
   ui-ux-best-practices/
   ui-element-best-practices/
+  ui-design-laws/
   component-library/
   component-development/
   component-testing/
