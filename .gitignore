@@ -11,3 +11,4 @@ Thumbs.db
 .codex/skills/
 .gemini/skills/
 .dot-skills-lock.json
+.env
