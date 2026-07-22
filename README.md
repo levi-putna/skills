@@ -90,7 +90,7 @@ npx dot-skills add levi-putna/skills/seo-audit-page
 
 #### [video-generate-explainer](.skills/video-generate-explainer/)
 
-End-to-end pipeline for a narrated UI/product-style explainer or example video built with Remotion (default ~1 minute, no fixed length cap - Gate 1 sets the target from content; Veo clip limits apply only to individual generated clips, not the overall production): audio-first script → scene plan (flagging any scene that could use Veo-generated or real video) → shared theme/components + background strategy → ElevenLabs narration with timestamp sync → scene components/generated clips → single deterministic render → automated critic pass on brief fit, UI/animation clarity, and script delivery. Gate-by-gate approval workflow. Not for realistic/live-action video.
+End-to-end pipeline for a narrated UI/product-style explainer or example video built with Remotion (default ~1 minute, no fixed length cap - Gate 1 sets the target from content; Veo clip limits apply only to individual generated clips, not the overall production): audio-first script → scene plan (flagging any scene that could use Veo-generated or real video) → shared theme/components + background strategy (including feature/page reconstruction and subtle camera zoom/focus) → ElevenLabs narration with timestamp sync → scene components/generated clips → single deterministic render → automated critic pass on brief fit, UI/animation clarity, and script delivery. Gate-by-gate approval workflow. Supports reconstructing an existing app page/feature in Remotion so it reads like a polished screen recording. Not for realistic/live-action video or literal live-app captures.
 
 ```sh
 npx dot-skills add levi-putna/skills/video-generate-explainer

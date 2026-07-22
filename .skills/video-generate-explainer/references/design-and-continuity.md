@@ -94,6 +94,13 @@ theme defined at Gate 4, applied consistently across scenes.
 - Reuse a small set of named motion presets from `shared/theme.ts` (e.g.
   `enter`, `exit`, `emphasis` spring configs) instead of inventing bespoke
   easing per scene - this is also a continuity mechanism.
+- **Camera zoom/focus** (a transform on the whole UI stage) counts as the
+  scene's primary motion when used - don't also run a competing full-element
+  scale on the same control. Keep punch-ins subtle and sparse; see
+  [camera-zoom-focus.md](camera-zoom-focus.md). When the brief is a page/
+  feature walkthrough, prefer reconstructing the real screen and aiming the
+  camera over inventing a disconnected collage - see
+  [feature-walkthrough-reconstruction.md](feature-walkthrough-reconstruction.md).
 
 ## UI layout realism (whenever a scene shows interface chrome)
 

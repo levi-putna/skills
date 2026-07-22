@@ -33,11 +33,25 @@ screen.
   anything - pair every change with something unmissable: a colour shift,
   an icon swap, a checkmark, a highlight ring appearing. If it wouldn't
   read on a still frame, it won't read in motion either.
+- **Use subtle camera zoom to focus action inside a full-page mock**,
+  especially when reconstructing a real screen - ease in, hold through
+  typing/clicking, ease out. Prefer light punch-ins (~1.12–1.35×) over
+  aggressive crops. Full guidance:
+  [camera-zoom-focus.md](camera-zoom-focus.md). Zoom emphasises; it does
+  not replace an explicit state signal.
+- **When explaining an existing page/feature, reconstruct it** as a
+  finished Remotion screen with mock data (shared shell + props), not a
+  live capture or screenshot pan - see
+  [feature-walkthrough-reconstruction.md](feature-walkthrough-reconstruction.md).
 - **Use one consistent cursor/pointer** (a shared component, see
   [reusable-components.md](reusable-components.md)) for any demonstrated
   interaction. Move it with intent - ease toward the target, brief pause
   before the "click," brief pause after - so the action registers rather
   than blurring past.
+- **Type into fields one character at a time** (~35 cps default) with a
+  blinking caret - copy [assets/typing.ts](../assets/typing.ts), never dump
+  a whole email/word in one frame. See
+  [natural-typing.md](natural-typing.md).
 - **Keep in-mockup copy extremely short.** A label, a headline, a couple
   of words - never a paragraph a viewer would need to pause on. If the
   real product's copy is longer, that's a sign this beat should be told
@@ -72,10 +86,19 @@ screen.
   being taught.** A nav bar sliding in with the same emphasis as the
   button the scene is about competes for attention it hasn't earned - see
   design-and-continuity.md's motion-restraint rule.
+- **Don't zoom on every interaction or past ~1.35× for ordinary UI**
+  without a reason - sparse, subtle, ease-in/hold/ease-out punch-ins only
+  ([camera-zoom-focus.md](camera-zoom-focus.md)).
 - **Don't invent interaction states the real product doesn't have** (a
   fake "success" toast, a made-up settings screen) just to fill a beat -
   if the real UI doesn't do it, either simplify the claim or ask the user
   for the accurate flow.
+- **Don't paste a screenshot and pan across it** as a stand-in for
+  reconstructing the page when the brief is a feature walkthrough -
+  rebuild the UI in components
+  ([feature-walkthrough-reconstruction.md](feature-walkthrough-reconstruction.md)).
+- **Don't dump typed text in chunks or all at once** - one character per
+  step ([natural-typing.md](natural-typing.md)).
 
 ## Self-audit
 
@@ -89,3 +112,10 @@ ask of each checked frame:
   or does it rely on a hover/tooltip the viewer can't trigger?
 - Is any in-mockup text longer than a viewer could read in the time it's
   on screen?
+- If camera zoom is used: is it subtle, eased, and aimed at the narrated
+  control ([camera-zoom-focus.md](camera-zoom-focus.md))?
+- If typing is used: does a mid-beat still show a partial string, one
+  character at a time, with a caret ([natural-typing.md](natural-typing.md))?
+- If this is a feature walkthrough: would a teammate recognise the page,
+  and is mock data finished
+  ([feature-walkthrough-reconstruction.md](feature-walkthrough-reconstruction.md))?

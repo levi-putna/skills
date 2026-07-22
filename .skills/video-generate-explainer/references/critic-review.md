@@ -53,9 +53,22 @@ Re-apply the design-and-continuity.md checklist, but at whole-video scope:
   duration, no flash-then-gone information?
 - Does the background strategy chosen at Gate 4 stay consistent and never
   fight the foreground content for attention?
+- If camera zoom/focus is used, does it stay sparse and subtle (ease in,
+  hold through the action, ease out; roughly 1.12–1.35× for ordinary UI)
+  and land on the control the narration names - or does it feel seasick /
+  decorative? See [camera-zoom-focus.md](camera-zoom-focus.md).
+- If any field is "typed" on screen, does text appear character-by-character
+  via `typedText` / `typedTextOverDuration` (~35 cps default), or does a
+  full string/chunk pop in? See [natural-typing.md](natural-typing.md).
+- If the brief is a `feature-walkthrough`, does the UI read as a
+  reconstructed product screen (recognisable shell, finished mock data,
+  shared page continuity) rather than a generic kit or a screenshot pan?
+  See [feature-walkthrough-reconstruction.md](feature-walkthrough-reconstruction.md).
 
 **Fail this axis** if a stranger watching once, at real speed, with sound,
-couldn't say what each scene was showing and why.
+couldn't say what each scene was showing and why. Also fail a walkthrough
+that doesn't look like the product, a cut where zoom frequency/intensity
+undermines comprehension, or typing that appears in chunks / all at once.
 
 ### 3. Script delivery professionalism
 

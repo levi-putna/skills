@@ -1,7 +1,7 @@
 ---
 name: video-generate-explainer
 id: 90ae116e-4348-4c1a-b646-308b70c522b7
-version: 2.3.1
+version: 2.4.2
 author: Levi Putna
 repo: https://github.com/levi-putna/skills
 description: >-
@@ -18,21 +18,25 @@ description: >-
   audio-first script → scene plan (flagging any scene that could use
   generated or real video) → shared theme/components (reusing/promoting
   from a cross-production component library, with video-specific guidance
-  for charts/data viz and UI/UX rendering) + background strategy →
-  ElevenLabs narration with timestamp alignment → build each scene as a
-  Remotion component, a short Veo-generated clip, or (rarely) a
-  user-supplied real clip for an intro/outro → assemble with
-  Series/TransitionSeries timed exactly to the narration → one deterministic
-  render per format → an automated critic pass on brief fit, UI/animation
-  clarity, and script delivery before sign-off. Use when asked to create an
-  explainer video, product/feature teaser, UI walkthrough clip, marketing
-  example, or demo snippet using Remotion, whether that's a punchy
-  15-20 second teaser or a multi-minute walkthrough. Do NOT use this skill
-  for realistic/live-action video productions or anything where the primary
-  visual is real camera footage rather than UI/code-driven graphics -
-  screen-recorded tutorials, documentary-style long-form footage, or any
-  production whose primary visual isn't UI/code-driven graphics are a
-  different problem this skill does not solve.
+  for charts/data viz, UI/UX rendering, feature/page reconstruction,
+  natural per-character typing, and subtle camera zoom/focus) + background
+  strategy → ElevenLabs narration
+  with timestamp alignment → build each scene as a Remotion component, a
+  short Veo-generated clip, or (rarely) a user-supplied real clip for an
+  intro/outro → assemble with Series/TransitionSeries timed exactly to the
+  narration → one deterministic render per format → an automated critic
+  pass on brief fit, UI/animation clarity, and script delivery before
+  sign-off. Use when asked to create an explainer video, product/feature
+  teaser, UI walkthrough clip, marketing example, demo snippet, or a
+  narrated explanation of an existing app page/feature reconstructed in
+  Remotion (screen-recording look without a real capture), whether that's
+  a punchy 15-20 second teaser or a multi-minute walkthrough. Do NOT use
+  this skill for realistic/live-action video productions or anything where
+  the primary visual is real camera footage rather than UI/code-driven
+  graphics - literal screen-recorded tutorials meant to capture the live
+  app as-is, documentary-style long-form footage, or any production whose
+  primary visual isn't UI/code-driven graphics are a different problem
+  this skill does not solve.
 dependencies:
   - type: env
     name: ELEVENLABS_API_KEY
@@ -87,11 +91,16 @@ Produce a narrated explainer/example video with
 [Remotion](https://www.remotion.dev) (React components rendered to video)
 inside a Next.js project, with **user approval at every gate**. This is for
 **UI/product-style** videos - feature teasers, "how it works" clips,
-marketing examples, demo snippets, fuller product walkthroughs - not for
-realistic/live-action productions. If the ask is fundamentally a real-camera
-video (an interview, a testimonial, b-roll editing), this is the wrong
-skill. Length is not what determines fit here: a 15-second teaser and a
-5-minute walkthrough both belong in this skill as long as the visuals are
+marketing examples, demo snippets, fuller product walkthroughs, and
+**explainers of an existing app page/feature** reconstructed in code so they
+look like a polished screen recording (see
+[references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
+and [references/camera-zoom-focus.md](references/camera-zoom-focus.md)) - not
+for realistic/live-action productions. If the ask is fundamentally a
+real-camera video (an interview, a testimonial, b-roll editing) or a literal
+capture of the live app as the explanatory body, this is the wrong skill.
+Length is not what determines fit here: a 15-second teaser and a 5-minute
+walkthrough both belong in this skill as long as the visuals are
 UI/code-driven rather than real camera footage.
 
 This is the code-native sibling of a storyboard/AI-video pipeline: instead of
@@ -238,6 +247,27 @@ this skill** - Gate 4 defines it per-project.
     narration means more of the account's ElevenLabs credits/quota consumed
     per synthesis call. This is a heads-up for the user to weigh in on, not
     a gate that blocks a longer production.
+17. **Feature/page explainers reconstruct the UI in Remotion - they don't
+    use a live screen capture as the body of the video.** When the brief is
+    to explain an existing page or feature, rebuild that screen from pure
+    components + mock data so it reads like a finished product UI (and use
+    subtle camera zoom to step through actions). See
+    [references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
+    and [references/camera-zoom-focus.md](references/camera-zoom-focus.md).
+    A real capture remains out of scope for the explanatory body (Gate 3
+    `real-video` stays intro/outro-only).
+18. **Camera zoom is authored, sparse, and subtle** - ease in, hold through
+    the action, ease out; prefer ~1.12–1.35× punch-ins tied to typing/
+    clicking/spoken beats, not a zoom on every cursor move. Implement as
+    frame-driven `scale`/`translate` on a shared camera wrapper, never CSS
+    transitions. See [references/camera-zoom-focus.md](references/camera-zoom-focus.md).
+19. **On-screen typing is one character at a time** at ~35 chars/sec by
+    default (or stretched with `durationFrames` to fit a longer VO beat) -
+    never dump a whole word/email/phrase in one frame or in large chunks.
+    Copy [assets/typing.ts](assets/typing.ts) into the production/project
+    `shared/` folder and use `typedText` / `typedTextOverDuration`; show a
+    blinking caret. See
+    [references/natural-typing.md](references/natural-typing.md).
 
 ## Prerequisites
 
@@ -433,13 +463,26 @@ approved.
    - **Audience/tone** - who's watching, how formal/casual, first- or
      second-person address (this skill does not assume a house tone - ask
      once here, then keep it consistent for the whole production).
+   - **Production mode (when relevant)** - if the ask is to explain an
+     **existing page, screen, or feature** of the app (or should "look
+     like a screen recording" of the product), set
+     `feature-walkthrough` in `brief.md` and confirm the source UI (route/
+     screen name, the flow being taught, and whether you can inspect the
+     live page in the repo, a screenshot, or a URL). Read
+     [references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
+     before writing the brief - the default for this mode is to
+     **reconstruct** the page in Remotion with mock data (not capture the
+     live app). If they actually need a literal live capture, say this
+     skill is the wrong tool for the body of that video and offer
+     reconstruction for a narrated explainer instead.
 2. Derive the `slug` from the confirmed title and confirm it with the user
    if it's ambiguous. Create `remotion/productions/{slug}/` and
    `public/video/{slug}/` now that the slug is settled.
 3. Write the confirmed answers to `productions/{slug}/brief.md`: topic,
-   theme/angle, target length, platform(s) mapped to format(s), and
-   audience/tone. Every later gate reads from this file rather than
-   re-asking. Record the approved format(s) as the same
+   theme/angle, target length, platform(s) mapped to format(s),
+   audience/tone, and (when applicable) production mode + source UI. Every
+   later gate reads from this file rather than re-asking. Record the
+   approved format(s) as the same
    `Use Case | Aspect Ratio | Resolution | Notes` table presented in step 1,
    filtered to just the chosen row(s) plus each row's `{ id, width, height }`
    (e.g. `id: "9x16", width: 1080, height: 1920`) so `scenes.json`/`Root.tsx`
@@ -602,6 +645,15 @@ approved.
    [references/content-formula.md](references/content-formula.md)) into
    `onScreenText`/`visualNotes` now, with the qualitative tag and literal
    value for every variant shown, not just the correct one.
+   **If the brief is `feature-walkthrough`**, read
+   [references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
+   and plan **one shared reconstructed page shell** across the walkthrough
+   scenes (state/focus via props), not a new abstract layout per beat.
+   Prefer `component` for the whole explanatory body. Put zoom/reframe
+   targets in each scene's `visualNotes` per
+   [references/camera-zoom-focus.md](references/camera-zoom-focus.md)
+   (typing, clicks, small details) - authored and sparse, not a zoom on
+   every cursor move.
 8. Sum the planned scene lengths (narration-derived estimate for component
    scenes, `durationSeconds` for video scenes) and confirm the total is
    **close to the brief's approved `targetLengthSeconds`**. If it's drifted
@@ -609,8 +661,10 @@ approved.
    now, before Gate 4/5/6 work is built on top of it.
 9. **Present the scene table** (id, visualType, title, keyPoint, one-line
    narration excerpt) **and the flagged real/generated-video call-outs from
-   step 4 separately, requiring explicit approval**. **End with the gate
-   status block. Wait.**
+   step 4 separately, requiring explicit approval**. For a feature
+   walkthrough, also call out the reconstructed source screen and the
+   planned zoom beats in one short list. **End with the gate status block.
+   Wait.**
 
 ### Gate 4 - Theme + shared components + background
 
@@ -684,14 +738,37 @@ approved.
    [references/ui-ux-video-guidelines.md](references/ui-ux-video-guidelines.md)
    (oversizing for legibility, stripping chrome to what the scene needs,
    explicit state-change signals) before it's built at Gate 6.
+   **If the brief is `feature-walkthrough`**, Gate 4 is where the page gets
+   reconstructed: inspect the source UI, build **one** shared screen
+   component with mock data and the states the timeline needs, and add a
+   shared `CameraFocus` (or equivalent) helper plus cursor - follow
+   [references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
+   and [references/camera-zoom-focus.md](references/camera-zoom-focus.md).
+   Do not import the live app's page tree (router/data/providers) into
+   Remotion; re-declare the visual structure and wire tokens from the
+   project design system where safe. Even outside walkthrough mode, if a
+   scene's `visualNotes` call for a punch-in on typing/clicking, add the
+   camera helper and named focus presets (`focusSubtle`, `focusStandard`,
+   etc.) to `theme.ts` now rather than inventing easing per scene at Gate 6.
+   If any scene types into a field, copy
+   [assets/typing.ts](assets/typing.ts) into
+   `productions/{slug}/shared/typing.ts` (or reuse
+   `remotion/shared/typing.ts` if it already exists) and follow
+   [references/natural-typing.md](references/natural-typing.md) - default
+   ~35 chars/sec via `typedText`, or `typedTextOverDuration` to fit VO;
+   one character at a time, never chunk reveals.
 8. Render a quick still of one shared component (and the background, if any)
    in isolation to confirm it looks right - in every approved format if
    there's more than one, not just the primary (`npx remotion still`, per
    [references/remotion-nextjs-setup.md](references/remotion-nextjs-setup.md)).
+   For a walkthrough shell, render a wide still a teammate could recognise
+   as the real page.
 9. **Present the theme + shared component list + background choice and why**
    (link each file, including any generated background image, and any
-   component sourced from or promoted to `remotion/shared/`). **End with
-   the gate status block. Wait.**
+   component sourced from or promoted to `remotion/shared/`). For a
+   walkthrough, also present the UI inventory (regions/controls/states)
+   and which zoom presets you locked in. **End with the gate status block.
+   Wait.**
 
 ### Gate 5 - Narration and audio generation
 
@@ -772,6 +849,17 @@ per its `visualType` from Gate 3.
    [references/multi-format-layout.md](references/multi-format-layout.md)'s
    self-audit (reflow vs. just scaling, platform safe zones for a 9:16
    destined for TikTok/Reels/Shorts/Stories).
+   If the scene uses camera zoom/focus, also check it against
+   [references/camera-zoom-focus.md](references/camera-zoom-focus.md)
+   (subtle scale, ease-in/hold/ease-out, focal point matches narration).
+   If the scene types into an input/search/code field, also check it against
+   [references/natural-typing.md](references/natural-typing.md) (one
+   character at a time via `typedText` / assets/typing.ts, caret, no chunk
+   dump - mid-still must show a partial string).
+   If the production is a `feature-walkthrough`, also check it against
+   [references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
+   (recognisable shell, finished mock data, shared page props - not a
+   screenshot pan).
    Fix the component and re-render the still if it fails.
 
 **`generated-video` scenes (only if approved at Gate 3):**
@@ -911,21 +999,28 @@ running this gate.
    self-audit - this is a distinct failure mode multi-format introduces and
    belongs under the "UI & animation clarity" axis; the narration/timing
    axes are shared across formats and don't need re-checking per format.
-3. Write a critic report to `productions/{slug}/critic/report-{n}.md`:
+3. **If the brief is `feature-walkthrough`**, additionally check
+   reconstruction + zoom discipline under UI & animation clarity:
+   recognisable page shell, finished mock data, shared screen continuity,
+   and sparse subtle punch-ins per
+   [references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
+   and [references/camera-zoom-focus.md](references/camera-zoom-focus.md)
+   (also summarised in the critic rubric).
+4. Write a critic report to `productions/{slug}/critic/report-{n}.md`:
    pass/fail per axis, and for any failure, the concrete fix and which gate
    owns it.
-4. **If any axis fails**: apply the fix at the owning gate (re-edit a scene,
+5. **If any axis fails**: apply the fix at the owning gate (re-edit a scene,
    re-cut the script, adjust a transition, etc. - use the Revisions table
    below), redo Gate 7 (re-render every format), and re-run this gate.
    **Cap this loop at 3 iterations.** If it still hasn't passed after 3,
    stop and hand the specific unresolved finding to the user instead of
    continuing to loop.
-5. Once all three axes pass (or the loop cap is hit), **present the final
+6. Once all three axes pass (or the loop cap is hit), **present the final
    critic report together with every rendered format and its poster
    frame** - never one without the other. Note total duration, scene
    count, voice used, format(s) delivered, and how many critic iterations
    it took.
-6. **End with the gate status block** (all gates `[x]` when approved). Wait
+7. **End with the gate status block** (all gates `[x]` when approved). Wait
    for final sign-off.
 
 ## Revisions
@@ -946,6 +1041,9 @@ which are genuinely re-shoot/re-generate operations:
 | Critic flags an issue at Gate 8 | Follow the report's "which gate owns it" pointer, fix there, redo Gate 7, re-run Gate 8 - don't patch around the symptom at the render step. |
 | A new platform/format is needed after Gate 1 was approved (e.g. "we also need a vertical cut now") | Update `brief.md` and `scenes.json`'s `formats` array, check every shared component (Gate 4) actually adapts to it, register the new `<Composition>` in `Root.tsx`, render it (Gate 7), and run it through Gate 8 - script/narration/timing are unaffected and don't need redoing. |
 | A format needs to be dropped | Remove it from `brief.md`/`scenes.json`, remove its `<Composition>` registration, stop rendering/shipping it - no other change needed. |
+| Zoom is too aggressive / seasick / missing on a typing beat | Adjust the shared camera beat (scale, ease-in/hold/ease-out, origin) per [references/camera-zoom-focus.md](references/camera-zoom-focus.md); don't invent a one-off CSS zoom. |
+| Typing appears in chunks / all at once | Use/fix the shared helper copied from [assets/typing.ts](assets/typing.ts) per [references/natural-typing.md](references/natural-typing.md) - `typedText` at ~35 cps or `typedTextOverDuration`; shorten the mock string if needed; never multi-character chunk dumps. |
+| Walkthrough doesn't look like the real page | Fix the shared reconstructed screen + mock data at Gate 4 scope ([references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)); don't patch a divergent layout into one scene file. |
 
 Present the updated still/render and wait for approval before moving on -
 same as any other gate, just scoped to the one thing that changed.
@@ -1017,6 +1115,24 @@ same as any other gate, just scoped to the one thing that changed.
   image without first confirming `AI_GATEWAY_API_KEY` is set (Gate 0) - if
   it isn't, those options aren't available; don't discover this mid-Gate 6
   after a scene was already approved around them.
+- Use a live screen recording / static screenshot pan as the body of a
+  feature or page explainer when the brief called for this skill - reconstruct
+  the UI in Remotion instead
+  ([references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)).
+- Over-zoom or auto-zoom every cursor twitch - camera focus is sparse,
+  subtle (~1.12–1.35× for ordinary UI), ease-in/hold/ease-out, and tied to
+  spoken teaching beats
+  ([references/camera-zoom-focus.md](references/camera-zoom-focus.md)).
+- Dump typed text in words or multi-character chunks, or pop in a full
+  string in one frame - typing must use the shared helper from
+  [assets/typing.ts](assets/typing.ts) (`typedText` / `typedTextOverDuration`)
+  ([references/natural-typing.md](references/natural-typing.md)).
+- Re-implement a one-off string slicer in a scene when
+  [assets/typing.ts](assets/typing.ts) (or `remotion/shared/typing.ts`)
+  should be copied/imported instead.
+- Import the live app's page tree (router, loaders, providers, browser-only
+  APIs) into Remotion to "reuse" a real page - re-declare the visuals with
+  pure components and mock data instead.
 
 ## Additional resources
 
@@ -1030,7 +1146,12 @@ same as any other gate, just scoped to the one thing that changed.
 - Production-quality guidelines (hooks, captions, audio mixing, safe margins, export/delivery): [references/production-quality-guidelines.md](references/production-quality-guidelines.md)
 - Charts/graphs/data viz - React/SVG vs. visx, frame-driven chart animation, categories, attention/simplicity guidelines: [references/data-visualization.md](references/data-visualization.md)
 - Rendering UI/UX in video - dos and don'ts for legibility, state signals, pacing: [references/ui-ux-video-guidelines.md](references/ui-ux-video-guidelines.md)
+- Subtle camera zoom/focus (Screen Studio-style punch-ins on typing/clicks, authored sparingly): [references/camera-zoom-focus.md](references/camera-zoom-focus.md)
+- Natural typing - one character at a time (~35 cps default), caret, no chunk dumps: [references/natural-typing.md](references/natural-typing.md)
+- Remotion typing helper to copy into `shared/typing.ts`: [assets/typing.ts](assets/typing.ts)
+- Feature/page walkthroughs - reconstruct existing app UI in Remotion with mock data (not a live capture): [references/feature-walkthrough-reconstruction.md](references/feature-walkthrough-reconstruction.md)
 - Responsive layout across 16:9/1:1-4:5/9:16, orientation-based reflow, and platform (TikTok/Reels/Shorts/Stories) safe zones for multi-format productions: [references/multi-format-layout.md](references/multi-format-layout.md)
 - Cross-production shared component library - what belongs in `remotion/shared/`, theme extension, promotion criteria: [references/reusable-components.md](references/reusable-components.md)
 - Remotion docs: https://www.remotion.dev/docs
 - Official Remotion API skill (deeper reference for anything not covered above - 3D, charts, Lottie, Tailwind, video trimming, etc.): https://github.com/remotion-dev/skills
+- Screen Studio zoom docs (inspiration for camera-focus feel, not a Remotion API): https://screen.studio/guide/animations · https://www.screen.studio/guide/adding-editing-zooms · https://www.screen.studio/guide/auto-zoom · https://www.screen.studio/guide/manual-zoom

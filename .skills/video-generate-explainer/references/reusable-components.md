@@ -120,6 +120,16 @@ to force the promotion:
   instead of each production inventing its own chart style.
 - **A house cursor/pointer** for any project that regularly does UI
   walkthrough-style explainers.
+- **Camera focus / punch-in helper** (`CameraFocus` or equivalent) once
+  the project does feature walkthroughs or typing/click demos often - see
+  [camera-zoom-focus.md](camera-zoom-focus.md). Keep focus presets in the
+  shared theme; don't re-invent ease-in/hold/ease-out per production.
+- **Natural typing helper** - copy
+  [assets/typing.ts](../assets/typing.ts) into
+  `productions/{slug}/shared/typing.ts`, then promote to
+  `remotion/shared/typing.ts` once a second production needs it - see
+  [natural-typing.md](natural-typing.md). Default ~35 chars/sec via
+  `typedText`; always character-wise, never reinvented per scene.
 
 Everything else - a scene-specific card, a one-off diagram - stays in
 that production's own `shared/` until (and unless) a second production
