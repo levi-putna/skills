@@ -120,8 +120,9 @@ not an actionable finding and shouldn't be written down as one.
    the fix (script wording → Gate 2/5, scene plan/timing → Gate 3/5, a
    specific scene's build → Gate 6, assembly/transitions → Gate 7) and apply
    it there, following the Revisions table in the main SKILL.md.
-4. Redo Gate 7 (re-render, re-export the poster), then redo Gate 8 (new
-   `report-{n+1}.md`, `n` incremented).
+4. Redo Gate 7 (re-render; regenerate the poster only if the fix changed
+   theme/hook/format or the poster itself was rejected), then redo Gate 8
+   (new `report-{n+1}.md`, `n` incremented).
 5. **Cap at 3 iterations total.** If iteration 3's report still has a
    failing axis, stop looping. Present all 3 reports, the current render,
    and a plain statement of what's still unresolved and why it wasn't

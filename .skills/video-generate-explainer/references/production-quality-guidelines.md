@@ -85,12 +85,13 @@ between a 16:9, 1:1/4:5, and 9:16 layout.
 - Export each approved format's `final.mp4`/`final-{formatId}.mp4` at the
   resolution the brief specified (don't silently downscale to save render
   time).
-- Export a poster frame (`poster.png`/`poster-{formatId}.png`, Gate 7
-  step 5) from the strongest single on-screen moment - usually mid-way
-  through the hook or the clearest UI moment - for use as a thumbnail/video
-  poster attribute. Don't default to frame 0 without checking it's actually
-  representative, and don't assume the same frame works for every format if
-  their layouts genuinely differ.
+- Generate a poster image (`poster.png`/`poster-{formatId}.png`, Gate 7
+  step 5) with gpt-image-2 per
+  [poster-generation.md](poster-generation.md) - one purpose-designed still
+  per format, theme-aligned and composed for that channel (YouTube thumbnail
+  rules ≠ vertical social cover ≠ website hero poster). A Remotion still is
+  only a prompt reference or an AI-Gateway fallback - don't default to
+  frame 0, and don't reuse one poster across formats with different aspects.
 - If a new platform/format is needed after Gate 1 already closed, treat it
   as a Revisions-table change (main SKILL.md) - add it to the brief and
   `scenes.json`, verify shared components actually adapt to it (Gate 4),

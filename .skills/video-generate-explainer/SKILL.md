@@ -1,7 +1,7 @@
 ---
 name: video-generate-explainer
 id: 90ae116e-4348-4c1a-b646-308b70c522b7
-version: 2.4.2
+version: 2.4.3
 author: Levi Putna
 repo: https://github.com/levi-putna/skills
 description: >-
@@ -57,14 +57,17 @@ dependencies:
     name: AI_GATEWAY_API_KEY
     required: false
     description: >-
-      Needed only if the approved scene plan uses Veo-generated video (Gate 3)
-      or an AI-generated static background/support image (Gate 4). Not needed
-      for a production that only uses Remotion components on a plain or
-      CSS/React-generated background. If not set, generated-video scenes and
-      AI-generated images are unavailable - the pipeline falls back to
-      component scenes, user-supplied real-video (if provided), and blank or
-      CSS/React-generated backgrounds only; flag this to the user at Gate 0/1
-      rather than discovering it mid-pipeline.
+      Needed if the approved scene plan uses Veo-generated video (Gate 3),
+      an AI-generated static background/support image (Gate 4), or
+      gpt-image-2 poster/thumbnail generation (Gate 7). Not needed for a
+      production that only uses Remotion components on a plain or
+      CSS/React-generated background and can accept a Remotion-still poster
+      fallback. If not set, generated-video scenes and AI-generated images
+      (including posters) are unavailable - the pipeline falls back to
+      component scenes, user-supplied real-video (if provided), blank or
+      CSS/React-generated backgrounds, and Remotion-still posters only;
+      flag this to the user at Gate 0/1 rather than discovering it
+      mid-pipeline.
     instructions: >-
       Create a key in the Vercel dashboard under AI Gateway → API Keys, then
       add AI_GATEWAY_API_KEY=... to the project .env file. OIDC via
@@ -81,8 +84,9 @@ dependencies:
     required: false
     description: >-
       Overrides the image-generation model used for generated background/
-      support images. Defaults to openai/gpt-image-2. Has no effect unless
-      AI_GATEWAY_API_KEY is also set and an AI-generated image is approved.
+      support images and Gate 7 posters/thumbnails. Defaults to
+      openai/gpt-image-2. Has no effect unless AI_GATEWAY_API_KEY is also
+      set and an AI-generated image is approved.
 ---
 
 # Video: Generate Explainer
@@ -276,7 +280,7 @@ this skill** - Gate 4 defines it per-project.
 | `ELEVENLABS_API_KEY` | Yes | Narration synthesis + timestamp alignment | The pipeline cannot run at all - narration is core to every production, not an optional feature. Stop and ask the user to add it before Gate 1. |
 | `ELEVENLABS_VOICE_ID` | Yes | Consistent VO voice for this project | Same as above - stop and ask before Gate 1. |
 | `ELEVENLABS_MODEL_ID` | No | Default `eleven_multilingual_v2` | Falls back to the default model; no feature loss. |
-| `AI_GATEWAY_API_KEY` | Only if a generated-video or generated-image scene is approved | Vercel AI Gateway auth (or OIDC via `vercel env pull`) | **`generated-video` scenes and AI-generated background/support images are unavailable.** The production must stick to `component` scenes, `real-video` (only if the user supplies their own clip), and blank or CSS/React-generated backgrounds. Say this explicitly at Gate 0/1 (see below) rather than letting the user discover it when a Gate 3 idea can't be built. |
+| `AI_GATEWAY_API_KEY` | Only if a generated-video or generated-image scene is approved, or Gate 7 posters should be gpt-image-2 | Vercel AI Gateway auth (or OIDC via `vercel env pull`) | **`generated-video` scenes, AI-generated background/support images, and gpt-image-2 posters are unavailable.** The production must stick to `component` scenes, `real-video` (only if the user supplies their own clip), blank or CSS/React-generated backgrounds, and Remotion-still poster fallback. Say this explicitly at Gate 0/1 (see below) rather than letting the user discover it when a Gate 3/7 idea can't be built. |
 | `AI_GATEWAY_VIDEO_MODEL` | No | Default `google/veo-3.1-generate-001` | Only relevant when `AI_GATEWAY_API_KEY` is set and a `generated-video` scene is approved; otherwise falls back to the default model with no effect. |
 | `AI_GATEWAY_IMAGE_MODEL` | No | Default `openai/gpt-image-2` | Only relevant when `AI_GATEWAY_API_KEY` is set and an AI-generated image is approved; otherwise falls back to the default model with no effect. |
 
@@ -325,7 +329,7 @@ public/
     generated/{name}.png            # Gate 4 - AI-generated background/support images, if any
     final.mp4                       # Gate 7 output - if only one format was approved
     final-{formatId}.mp4            # Gate 7 output - one per format instead of final.mp4, if more than one format was approved
-    poster.png / poster-{formatId}.png  # Gate 7 - a still frame per output file, for use as a video poster/thumbnail
+    poster.png / poster-{formatId}.png  # Gate 7 - gpt-image-2 poster per format (channel-aware); Remotion still only as fallback
 ```
 
 `remotion/` sits at the project root next to `app/`/`src/`, per the standard
@@ -390,14 +394,16 @@ Video production progress:
    - `ELEVENLABS_API_KEY`/`ELEVENLABS_VOICE_ID` are required for the whole
      skill. If either is missing, stop here and ask the user to add it
      before proceeding to Gate 1 - there is no fallback.
-   - `AI_GATEWAY_API_KEY` is optional but gates two features:
-     `generated-video` scenes (Gate 3) and AI-generated background/support
-     images (Gate 4). If it is **not** set, note this plainly in the Gate 1
-     message: generated-video and AI-generated images won't be offered as
-     options for this production, and Gate 3/4 will default to component
-     scenes/real-video-if-supplied and blank or CSS/React-generated
-     backgrounds instead. This is informational, not a blocker - most
-     productions don't need it.
+   - `AI_GATEWAY_API_KEY` is optional but gates three features:
+     `generated-video` scenes (Gate 3), AI-generated background/support
+     images (Gate 4), and gpt-image-2 posters/thumbnails (Gate 7). If it is
+     **not** set, note this plainly in the Gate 1 message: generated-video
+     and AI-generated images won't be offered as options for this
+     production, Gate 3/4 will default to component scenes/real-video-if-
+     supplied and blank or CSS/React-generated backgrounds, and Gate 7 will
+     fall back to a Remotion still for the poster. This is informational,
+     not a blocker - most productions don't need generated video/backgrounds,
+     but posters are better with the key set.
 6. No status block needed if this was a no-op (entry point already existed) -
    just note it, plus the env var check from step 5, in the Gate 1 message.
    If you scaffolded anything, show what was added before moving on.
@@ -968,10 +974,17 @@ you're presenting. Wait.**
    npx remotion render remotion/index.ts {slug}-{formatId} public/video/{slug}/final-{formatId}.mp4
    ```
 
-5. Export a poster frame per rendered file (a representative still, usually
-   the strongest on-screen moment - it can differ per format if the layout
-   genuinely differs) to `public/video/{slug}/poster.png` (or
-   `poster-{formatId}.png`) via `npx remotion still`.
+5. Generate a **poster image per rendered format** with
+   `openai/gpt-image-2` (via AI Gateway) following
+   [references/poster-generation.md](references/poster-generation.md) -
+   theme-aligned to Gate 4, sized and composed for that format's channel
+   (YouTube long-form vs Shorts/Reels/TikTok vs feed/square vs website
+   hero). Save to `public/video/{slug}/poster.png` (single format) or
+   `poster-{formatId}.png` (multi-format). A Remotion still may be used as
+   a visual reference for the prompt, but is **not** the shippable poster
+   when AI Gateway is available. If `AI_GATEWAY_API_KEY` is missing, fall
+   back to `npx remotion still` from the strongest on-screen moment and
+   say so at Gate 8.
 6. **Do not present this as final yet** - proceed directly into Gate 8. Note
    the render's existence in the Gate 8 message rather than stopping here to
    wait (the critic pass happens before the user sees the "final" claim).
@@ -1017,9 +1030,9 @@ running this gate.
    continuing to loop.
 6. Once all three axes pass (or the loop cap is hit), **present the final
    critic report together with every rendered format and its poster
-   frame** - never one without the other. Note total duration, scene
-   count, voice used, format(s) delivered, and how many critic iterations
-   it took.
+   image** - never one without the other. Note total duration, scene
+   count, voice used, format(s) delivered, poster source (gpt-image-2 vs
+   Remotion-still fallback), and how many critic iterations it took.
 7. **End with the gate status block** (all gates `[x]` when approved). Wait
    for final sign-off.
 
@@ -1142,6 +1155,7 @@ same as any other gate, just scoped to the one thing that changed.
 - ElevenLabs timestamped synthesis, scene-timing math, captions: [references/elevenlabs-narration-sync.md](references/elevenlabs-narration-sync.md)
 - Next.js project setup, packages, Remotion primitives (incl. `OffthreadVideo`): [references/remotion-nextjs-setup.md](references/remotion-nextjs-setup.md)
 - Veo video generation + AI-generated image guidelines via AI Gateway: [references/video-image-generation.md](references/video-image-generation.md)
+- Poster/thumbnail generation with gpt-image-2 - channel styles (YouTube vs social vs feed vs website), theme alignment, prompt focus: [references/poster-generation.md](references/poster-generation.md)
 - Gate 8 critic rubric and loop mechanics: [references/critic-review.md](references/critic-review.md)
 - Production-quality guidelines (hooks, captions, audio mixing, safe margins, export/delivery): [references/production-quality-guidelines.md](references/production-quality-guidelines.md)
 - Charts/graphs/data viz - React/SVG vs. visx, frame-driven chart animation, categories, attention/simplicity guidelines: [references/data-visualization.md](references/data-visualization.md)

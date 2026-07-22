@@ -89,8 +89,10 @@ in the first place - take it back to Gate 3.
 
 ## Image generation (via `AI_GATEWAY_IMAGE_MODEL`)
 
-Used for a Gate 4 background image, or any other static support image the
-production genuinely needs (never generate an image just to fill space -
+Used for a Gate 4 background image, a Gate 7
+**poster/thumbnail** (see [poster-generation.md](poster-generation.md) for
+channel-specific design and prompting), or any other static support image
+the production genuinely needs (never generate an image just to fill space -
 see the relevance rule in design-and-continuity.md).
 
 ```ts
@@ -125,9 +127,11 @@ between 655,360 and 8,294,400. In practice, pick from:
 
 | Use case | Size | Notes |
 |---|---|---|
-| Square backdrop/card art | `1024x1024` | Good general default |
+| Square backdrop/card art | `1024x1024` | Good general default; also the 1:1 feed poster size |
 | 16:9 background (matches this skill's default aspect ratio) | `1536x1024` | Landscape; crop/scale to the exact composition dimensions in the component if they differ slightly |
+| 16:9 YouTube / website poster | `1536x1024` or `1920x1088` | See [poster-generation.md](poster-generation.md); deliver toward YouTube's 1280×720 custom-thumbnail target |
 | 9:16 background (vertical productions) | `1024x1536` | Portrait |
+| 9:16 Shorts / Reels / TikTok poster | `1024x1536` | Centre the hook for profile-grid crop - see [poster-generation.md](poster-generation.md) |
 | Higher-fidelity 16:9 backdrop | `2048x1152` (2K) | Use when the background fills most of the frame and softness would be visible; costs more, slower |
 
 Don't reach for 4K (`3840x2160`) for a background that scenes' foreground
@@ -138,11 +142,12 @@ most of what's on screen.
 ### Quality
 
 - `low` - fast drafts/iteration only. Don't ship this as a final background.
-- `medium` - **default choice** for this pipeline. Clean, production-usable,
-  much cheaper/faster than `high`.
-- `high` - only when the image contains small/dense text (rare for a
-  background) or needs to hold up as a close-up hero shot rather than a
-  backdrop mostly covered by foreground content.
+- `medium` - **default choice** for background/support images in this
+  pipeline. Clean, production-usable, much cheaper/faster than `high`.
+- `high` - use for **Gate 7 posters/thumbnails** (the image is the hero
+  asset), or when a background contains small/dense text (rare) or needs to
+  hold up as a close-up rather than a backdrop mostly covered by foreground
+  content.
 
 ### Background colour / compositing
 
