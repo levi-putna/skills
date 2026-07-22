@@ -1,7 +1,7 @@
 ---
 name: video-generate-explainer
 id: 90ae116e-4348-4c1a-b646-308b70c522b7
-version: 2.3.0
+version: 2.3.1
 author: Levi Putna
 repo: https://github.com/levi-putna/skills
 description: >-
@@ -324,7 +324,7 @@ Close every gate message with:
 
 Video production progress:
 - [x] Gate 0 - Project and video setup
-- [x] Gate 1 - Planning brief (topic, length, platform(s), format(s))
+- [x] Gate 1 - Video planning and brief
 - [x] Gate 2 - Script
 - [ ] Gate 3 - Scene plan + visual plan  ← Current
 - [ ] Gate 4 - Theme + shared components + background
@@ -372,7 +372,7 @@ Video production progress:
    just note it, plus the env var check from step 5, in the Gate 1 message.
    If you scaffolded anything, show what was added before moving on.
 
-### Gate 1 - Planning brief
+### Gate 1 - Video planning and brief
 
 This is the first gate for *this production* (Gate 0 was a one-time,
 project-wide setup step) and it always runs, even if the request already
