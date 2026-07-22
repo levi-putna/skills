@@ -1,7 +1,7 @@
 ---
 name: video-generate-explainer
 id: 90ae116e-4348-4c1a-b646-308b70c522b7
-version: 2.4.3
+version: 2.5.1
 author: Levi Putna
 repo: https://github.com/levi-putna/skills
 description: >-
@@ -272,6 +272,15 @@ this skill** - Gate 4 defines it per-project.
     `shared/` folder and use `typedText` / `typedTextOverDuration`; show a
     blinking caret. See
     [references/natural-typing.md](references/natural-typing.md).
+20. **Never use an em dash (—).** Ban it in every written surface this skill
+    produces: planning brief, narration script, on-screen labels/captions,
+    critic reports, gate messages, image/video prompts, and especially
+    poster/thumbnail hero text and any text rendered inside generated
+    images. Prefer commas, full stops, colons, parentheses, or a spaced
+    hyphen (` - `). If a model inserts an em dash, rewrite or regenerate
+    before presenting. See
+    [references/audio-first-script.md](references/audio-first-script.md)
+    and [references/poster-generation.md](references/poster-generation.md).
 
 ## Prerequisites
 
@@ -329,7 +338,7 @@ public/
     generated/{name}.png            # Gate 4 - AI-generated background/support images, if any
     final.mp4                       # Gate 7 output - if only one format was approved
     final-{formatId}.mp4            # Gate 7 output - one per format instead of final.mp4, if more than one format was approved
-    poster.png / poster-{formatId}.png  # Gate 7 - gpt-image-2 poster per format (channel-aware); Remotion still only as fallback
+    poster.png / poster-{formatId}.png  # Gate 7 - gpt-image-2 poster/thumbnail per format (layout from poster-generation.md; theme skins only)
 ```
 
 `remotion/` sits at the project root next to `app/`/`src/`, per the standard
@@ -974,17 +983,19 @@ you're presenting. Wait.**
    npx remotion render remotion/index.ts {slug}-{formatId} public/video/{slug}/final-{formatId}.mp4
    ```
 
-5. Generate a **poster image per rendered format** with
+5. Generate a **poster/thumbnail image per rendered format** with
    `openai/gpt-image-2` (via AI Gateway) following
    [references/poster-generation.md](references/poster-generation.md) -
-   theme-aligned to Gate 4, sized and composed for that format's channel
-   (YouTube long-form vs Shorts/Reels/TikTok vs feed/square vs website
-   hero). Save to `public/video/{slug}/poster.png` (single format) or
-   `poster-{formatId}.png` (multi-format). A Remotion still may be used as
-   a visual reference for the prompt, but is **not** the shippable poster
-   when AI Gateway is available. If `AI_GATEWAY_API_KEY` is missing, fall
-   back to `npx remotion still` from the strongest on-screen moment and
-   say so at Gate 8.
+   same asset for YouTube thumbnail, social cover, and HTML `poster`. Use
+   that guide for **what to include and how to lay it out** (text-led split
+   recipes, faceless visual anchors - **no people**); use Gate 4 theme/brand
+   only as **styling**. Size/compose per channel. Save to
+   `public/video/{slug}/poster.png` (single format) or
+   `poster-{formatId}.png` (multi-format). A Remotion still may inform the
+   prompt but is **not** the shippable thumbnail when AI Gateway is
+   available. If `AI_GATEWAY_API_KEY` is missing, fall back to
+   `npx remotion still` from the strongest on-screen moment and say so at
+   Gate 8.
 6. **Do not present this as final yet** - proceed directly into Gate 8. Note
    the render's existence in the Gate 8 message rather than stopping here to
    wait (the critic pass happens before the user sees the "final" claim).
@@ -1063,6 +1074,10 @@ same as any other gate, just scoped to the one thing that changed.
 
 ## Do not
 
+- Use an em dash (—) in any written output - scripts, on-screen copy,
+  captions, briefs, reports, prompts, or poster/thumbnail text (including
+  text inside generated images). Rewrite with commas, full stops, colons,
+  parentheses, or a spaced hyphen (` - `) instead.
 - Skip approval gates, or present a gate without the status block.
 - Skip or shortcut the Gate 1 planning brief because the request "already
   sounds specific enough" - confirm topic, theme, length, platform(s), and
@@ -1155,7 +1170,7 @@ same as any other gate, just scoped to the one thing that changed.
 - ElevenLabs timestamped synthesis, scene-timing math, captions: [references/elevenlabs-narration-sync.md](references/elevenlabs-narration-sync.md)
 - Next.js project setup, packages, Remotion primitives (incl. `OffthreadVideo`): [references/remotion-nextjs-setup.md](references/remotion-nextjs-setup.md)
 - Veo video generation + AI-generated image guidelines via AI Gateway: [references/video-image-generation.md](references/video-image-generation.md)
-- Poster/thumbnail generation with gpt-image-2 - channel styles (YouTube vs social vs feed vs website), theme alignment, prompt focus: [references/poster-generation.md](references/poster-generation.md)
+- Poster/thumbnail generation with gpt-image-2 - layout recipes, faceless visual anchors, YouTube CTR rules, theme as styling only; example boards in `assets/poster-examples/`: [references/poster-generation.md](references/poster-generation.md)
 - Gate 8 critic rubric and loop mechanics: [references/critic-review.md](references/critic-review.md)
 - Production-quality guidelines (hooks, captions, audio mixing, safe margins, export/delivery): [references/production-quality-guidelines.md](references/production-quality-guidelines.md)
 - Charts/graphs/data viz - React/SVG vs. visx, frame-driven chart animation, categories, attention/simplicity guidelines: [references/data-visualization.md](references/data-visualization.md)

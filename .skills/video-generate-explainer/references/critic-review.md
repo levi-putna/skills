@@ -77,8 +77,11 @@ undermines comprehension, or typing that appears in chunks / all at once.
   emphasis, no rushed clauses, no awkward robotic cadence?
 - Do breath points/`<break>` tags land where a human speaker would actually
   pause, not mid-idea?
-- Is the tone consistent with what was confirmed at Gate 1 throughout,
-  not drifting scene to scene?
+- Is the tone consistent with what was confirmed at Gate 1 throughout, or
+  does it drift formal/casual mid-video?
+- **No em dashes (—)** in the spoken script, on-screen labels/captions, or
+  the poster/thumbnail text - fail and rewrite if any appear (skill hard
+  rule).
 - Does the narration finish speaking with reasonable lead-out before the
   video cuts, rather than getting clipped?
 - If captions are enabled, do they match the spoken words and timing
@@ -86,7 +89,8 @@ undermines comprehension, or typing that appears in chunks / all at once.
 
 **Fail this axis** if the narration sounds rushed, mispaced, robotic, or
 inconsistent in tone, regardless of whether the words on the page were
-correct.
+correct - or if an em dash (—) appears in script, on-screen copy, or the
+poster/thumbnail.
 
 ## Report format
 

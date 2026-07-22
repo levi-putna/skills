@@ -61,7 +61,9 @@ Whatever the length, the shape itself stays:
 Pace like speech, not typesetting:
 
 - Prefer **punctuation and sentence rhythm** for most pauses (commas, full
-  stops, em-dashes).
+  stops, colons). **Never use an em dash (—)** in narration, on-screen
+  copy, or anywhere else this skill writes - use a spaced hyphen (` - `),
+  a comma, or a full stop instead (hard rule in the main SKILL.md).
 - Use ElevenLabs `<break time="0.3s" />` / `0.5s` deliberately, scaled to
   length - as a rough feel, roughly one natural breath point every 10-15
   seconds of runtime (after the hook, between beats/sections, before the
@@ -105,6 +107,8 @@ rest of the production - don't drift tone scene to scene.
 
 ## Gate 2 self-check (before presenting)
 
+- [ ] No em dashes (—) anywhere in the script - use commas, full stops,
+      colons, parentheses, or a spaced hyphen (` - `) instead
 - [ ] Sounds like a person talking, not a page excerpt
 - [ ] The opening line works as the hook itself - no lead-in before it
 - [ ] The shape (hook → show it → contrast/land, or whatever fits this

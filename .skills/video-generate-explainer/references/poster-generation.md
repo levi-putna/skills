@@ -1,186 +1,317 @@
 # Poster / thumbnail generation (gpt-image-2)
 
-At Gate 7, every rendered format needs a **purpose-designed poster**
-(`poster.png` / `poster-{formatId}.png`) - not a random mid-video still.
-A Remotion frame can be a useful *reference* for composition or colour, but
-the shippable poster is generated with **OpenAI `gpt-image-2`** via AI
-Gateway (`AI_GATEWAY_IMAGE_MODEL`, default `openai/gpt-image-2`), one image
-per approved format/platform style.
+The **poster** and the **thumbnail** are the same asset: the still that
+sells the click before play (YouTube custom thumbnail, social cover,
+HTML `poster`, OG preview). At Gate 7 every rendered format needs a
+purpose-designed `poster.png` / `poster-{formatId}.png` - not a random
+mid-video still.
 
-> Call mechanics, auth, size limits, and quality tiers live in
-> [video-image-generation.md](video-image-generation.md). This file is the
-> **what to design and how to prompt** layer for posters specifically.
+Generate with **OpenAI `gpt-image-2`** via AI Gateway
+(`AI_GATEWAY_IMAGE_MODEL`, default `openai/gpt-image-2`), one image per
+approved format/platform style. A Remotion frame may inform colour/subject
+only; it is not the shippable thumbnail when AI Gateway is available.
+
+> **Call mechanics** (auth, sizes, quality tiers):
+> [video-image-generation.md](video-image-generation.md).
+> **This file** decides *what the thumbnail includes and how to lay it out*.
+> **Gate 4 `theme.ts` / brand** only supplies *styling* (palette, mood,
+> type feel) - it does not redefine the layout recipe.
+
+Reference layouts (study these before prompting):
+
+| File | What to steal |
+|------|----------------|
+| [assets/poster-examples/layout-templates-split.png](../assets/poster-examples/layout-templates-split.png) | Split canvas: text zone + visual zone, diagonal colour blocks, badges, high-contrast palettes |
+| [assets/poster-examples/icon-plus-text.png](../assets/poster-examples/icon-plus-text.png) | Faceless pattern: oversized thematic icon + hero headline (no people) |
+| [assets/poster-examples/explainer-process-diagram.png](../assets/poster-examples/explainer-process-diagram.png) | Explainer pattern: huge question/headline + simple process cue (problem → process → solution) |
+| [assets/poster-examples/ui-explainer-text-led.png](../assets/poster-examples/ui-explainer-text-led.png) | UI/product pattern: two-tone hero title + simplified device mock + short callouts |
+
+## Roles: this guide vs theme/branding
+
+| Source | Controls |
+|--------|----------|
+| **This reference** | What appears on the poster, layout recipe, hierarchy, safe zones, faceless visual anchors, prompt structure |
+| **`brief.md` + script hook** | Topic sentence → compressed into the hero headline |
+| **`theme.ts` / brand** | Colours, accent, mood, type personality (translate into prompt styling - not a new composition) |
+
+Do **not** invent a new layout because the brand is "minimal" or "playful".
+Pick a recipe below, then **skin it** with the production theme.
 
 ## When this runs
 
-- **Gate 7, after** each format's `final.mp4` / `final-{formatId}.mp4` is
-  rendered.
-- **Requires** `AI_GATEWAY_API_KEY` (same as other generated images). If it
-  is not set, fall back to `npx remotion still` from the strongest on-screen
-  moment and say so plainly when presenting at Gate 8 - don't invent a
-  poster workflow that can't run.
-- Generate **once per format**, reuse the file everywhere that format needs
-  a poster/thumbnail. Don't regenerate "the same" poster per critic
-  iteration unless Gate 8 (or the user) specifically rejected the poster.
+- **Gate 7, after** each format's `final.mp4` / `final-{formatId}.mp4`.
+- **Requires** `AI_GATEWAY_API_KEY`. If missing, fall back to
+  `npx remotion still` from the strongest moment and say so at Gate 8 -
+  prefer compositing real hero type over a still that has none.
+- Generate **once per format**. Regenerate only if Gate 8/user rejects the
+  thumbnail or the hook/theme/format changed.
 
-## What a poster is for (vs a video frame)
+## YouTube thumbnail rules (baseline for every channel)
 
-| Job | Poster | Mid-video Remotion still |
-|-----|--------|--------------------------|
-| Sell the click / set expectation before play | Yes - primary job | No |
-| Match the production's theme (palette, mood, product feel) | Yes | Incidental |
-| Survive tiny preview sizes (YouTube sidebar, feed grid) | Must | Often fails |
-| Exact UI chrome / readable dense labels | Prefer Remotion still or composite | Strong |
+Distilled from current thumbnail practice (mobile-first CTR packaging).
+Apply these even when the destination is a website poster or social cover -
+YouTube is the strictest readability bar.
 
-Design the poster as a **standalone marketing still** that still feels like
-it belongs to *this* video - same theme tokens, same hook idea - not a
-screenshot dump and not a generic stock "tech abstract".
+| Rule | Do | Don't |
+|------|-----|--------|
+| **One idea** | One promise the viewer can decode in ~0.5s | Summarise the whole video |
+| **Hero text** | 2-4 words (cap ~5), huge bold sans, all-caps OK; **no em dashes (—)** | Tiny captions, sentences, title pasted verbatim, em dashes |
+| **Reads tiny** | Legible when shrunk to ~120–168px wide | Detail that only works at full canvas |
+| **Contrast** | Strong luminance + hue contrast vs light *and* dark YouTube chrome | Low-contrast greys that vanish in the feed |
+| **Safe zone** | Keep headline + visual anchor in the centre / left ~70% | Critical content in the **bottom-right** (duration badge) |
+| **Separation** | Outline, shadow, or colour slab behind type | Thin hairline type on busy photo |
+| **Curiosity** | Thumbnail + video title work as a pair (thumb adds angle/proof; title carries SEO) | Repeat the full title on the image |
+| **People** | **Never** for this skill - use a faceless visual anchor instead | Stock presenters, AI faces, pointing humans |
 
-## Inputs to gather before prompting
+Specs when shipping a YouTube custom thumbnail: design at gpt-image-2 sizes
+such as `1536x1024` / `1920x1088`, deliver toward **1280×720**, under ~2 MB
+PNG/JPG.
 
-Read these before writing a single prompt - don't invent a second brief:
+## Hard rule: no people
 
-1. **`brief.md`** - topic, theme/angle (the content hook), audience/tone,
-   target platform(s), approved format(s).
-2. **`shared/theme.ts`** - palette, type mood, motion/visual language
-   (translate to plain English in the prompt: "deep navy background,
-   single electric-teal accent, clean sans geometric UI feel" - not hex
-   dumps alone).
-3. **Script hook** - the opening idea the thumbnail must promise (one
-   claim, one contrast, one number - not the whole script).
-4. **Format/platform** - which channel this file will sit on (drives size,
-   safe zones, and composition rules below).
-5. **Optional Remotion reference still** - one strong frame
-   (`npx remotion still`) used only as *visual brief* for colour/subject;
-   do not ship that frame as the poster unless generation is unavailable.
+These productions are UI/product explainers. **Do not put a person, face,
+influencer, or mascot character in the thumbnail** - even if lifestyle
+template packs show faces in the visual zone.
 
-## Channel styles (pick the row that matches the brief)
+### What replaces the person (visual anchor)
 
-Generate **one poster per approved format**, using the matching style row.
-If one production ships both YouTube long-form and Reels, that is two
-prompts and two files - not one image stretched.
+Pick **one** primary anchor that fills the role a face would play (attention
++ emotion + topic cue):
+
+| Anchor | Best when | Notes |
+|--------|-----------|--------|
+| **Oversized thematic icon** | Concept is clear as a symbol (mic, chart, toggle, lock, cursor) | Sticker/outline treatment so it pops - see `icon-plus-text.png` |
+| **Simplified UI / device mock** | Feature or page walkthrough | Abstract chrome only - not a dense readable screenshot - see `ui-explainer-text-led.png` |
+| **Before / after split** | Contrast or "wrong vs right" brief | One variable labelled; text still hero |
+| **Big number / metric** | Data or outcome is the hook | The number can *be* the headline ("−40%") |
+| **Mini process row** | How-it-works explainers | 2–3 icon steps max (problem → process → solution) - see `explainer-process-diagram.png` |
+| **Product / object close-up** | Physical or branded object | Single subject, high contrast, no clutter |
+
+If you need directional attention (templates often use a person pointing),
+use **arrows, callout boxes, or glow** aimed at the proof graphic - never a
+human pointer.
+
+## What every thumbnail must include
+
+Build from this inventory - then stop. More elements = weaker CTR.
+
+### Required
+
+1. **Hero headline (2–4 words)** - names the topic; largest element;
+   highest contrast; centre/left safe zone.
+2. **One visual anchor** - from the table above; secondary to the text;
+   illustrates the headline.
+3. **Theme-skinned background** - solid, soft gradient, or light geometric
+   pattern using `theme.ts` colours - calm enough that type wins.
+
+### Optional (at most two)
+
+- **Eyebrow / part label** - tiny ("PART 2", "RULE 3", brand wordmark).
+- **One badge or CTA chip** - short ("WATCH", "NEW", a chapter tag) - never
+  longer than the hero line.
+- **One accent flourish** - brush swoosh, diagonal slash, soft glow behind
+  the anchor - creative flare, not a second subject.
+- **1–3 micro callouts** - only for dense UI explainers; short labels, not
+  paragraphs (`ui-explainer-text-led.png`).
+
+### Never
+
+- People / faces / stock "surprised creator"
+- Em dashes (—) in any on-image text, badges, callouts, or prompts - use a
+  spaced hyphen (` - `), comma, or full stop (skill-wide hard rule)
+- Full dense app screenshots as the hero
+- Watermarks, fake YouTube UI chrome, subscribe bells
+- More than one competing focal graphic
+- Text-free mood-only abstracts
+- Repeating the full video title word-for-word when a shorter angle works
+
+## Layout recipes (pick one, then theme-skin it)
+
+Default to a **split layout**: text zone + visual-anchor zone. That is the
+pattern across the reference examples and most high-CTR faceless thumbs.
+
+### Recipe A - Split text + icon (default faceless)
+
+Inspired by `layout-templates-split.png` + `icon-plus-text.png`.
+
+```
+┌──────────────────────────────┐
+│  HERO TEXT          [ICON]   │
+│  (left ~55%)        (right)  │
+│  optional eyebrow            │
+│           optional badge     │
+└──────────────────────────────┘
+```
+
+- Diagonal or block colour split is fine (black/orange, white/photo zone,
+  yellow field, etc.) - **recolour with theme tokens**.
+- Icon gets sticker outline / thick border so it reads at stamp size.
+- Best for concept explainers, feature names, series episodes.
+
+### Recipe B - Two-tone title + UI proof
+
+Inspired by `ui-explainer-text-led.png`.
+
+```
+┌──────────────────────────────┐
+│ BRAND · optional             │
+│ HERO LINE 1 (white)          │
+│ HERO LINE 2 (accent)   [UI]  │
+│ short sub (optional)   call- │
+│                      outs x3 │
+│ footer icon row (optional)   │
+└──────────────────────────────┘
+```
+
+- Hero title can break across two lines with **theme accent on the key
+  word(s)** ("UI BEST" / "**PRACTICES**").
+- Device mock is simplified shapes - not real dense UI.
+- Cap callouts at three; each is icon + 2–4 words.
+- Best for UI/UX, best-practices, multi-tip teasers.
+
+### Recipe C - Question headline + process cue
+
+Inspired by `explainer-process-diagram.png` (drop the person).
+
+```
+┌──────────────────────────────┐
+│ HOW DOES                     │
+│ IT WORK?  (accent on key)    │
+│ [sub banner]                 │
+│ ● Problem → ● Process → ● Solution │
+│              [optional icon] │
+└──────────────────────────────┘
+```
+
+- Headline can be a short question or promise.
+- Process row is optional support - keep icons huge and labels tiny.
+- Replace any human with a thematic icon or empty negative space + glow.
+- Best for "how it works", pipeline, onboarding explainers.
+
+### Recipe D - Billboards number / before-after
+
+```
+┌──────────────────────────────┐
+│  −40%          │  after UI   │
+│  DROP-OFF      │  (clean)    │
+│  (hero)        │─────────────│
+│                │  before UI  │
+│                │  (muted)    │
+└──────────────────────────────┘
+```
+
+- Number or contrast claim is the hero text.
+- Split proof graphic supports the claim.
+- Best for metrics, A/B, wrong-vs-right briefs
+  ([content-formula.md](content-formula.md)).
+
+### Vertical / square adaptations
+
+Same recipes; stack instead of side-by-side when the format is 9:16 or 1:1:
+
+- **Hero text in the centre band** (survives profile-grid crop).
+- Visual anchor above or below the type - still smaller than the headline.
+- Clear top/bottom unsafe zones for Reels/TikTok/Shorts UI overlays
+  ([multi-format-layout.md](multi-format-layout.md)).
+
+## Styling with the production theme
+
+`theme.ts` answers "how should it look?", not "what goes where?":
+
+1. Map **background / surface / accent** into the chosen recipe's colour
+   blocks (e.g. dark field + accent diagonal + white type).
+2. Put the **accent on the hero text** (or the key word) and on one support
+   graphic - not on everything.
+3. Match **mood** (calm product vs punchy social) in type weight and flare -
+   same recipe, different energy.
+4. Keep a **2–3 colour** thumbnail palette derived from theme (plus
+   black/white). More colours dilute contrast at mobile size.
+5. Creative flare (glow, slash, brush, geometric dots) stays within theme
+   colours and **never** outranks the headline.
+
+## Channel sizes & safe zones
+
+Generate **one thumbnail per approved format**.
 
 ### YouTube long-form (16:9)
 
 | Spec | Guidance |
 |------|----------|
-| Canvas | Prefer `1536x1024` or `1920x1088` (multiples of 16); ship/export targeting **1280×720** (YouTube's standard custom thumbnail). Stay under ~2 MB when delivering JPG/PNG for upload. |
-| Reads at | ~168×94 (sidebar) and ~320×180 (mobile home) - design for the tiny size, not the full canvas. |
-| Safe zone | Keep face/focal subject + any text in the **centre ~70%**. Leave the **bottom-right** clear - YouTube's duration badge covers it. |
-| Text | **3–5 words max**, huge, bold, high contrast. If you can't read it when the image is shrunk to a few centimetres wide, cut words or enlarge. |
-| Focal point | **One** dominant subject. For this skill's UI/product videos: a single oversized UI fragment, a bold before/after split, or one hero number - not a full dense screen capture. |
-| Contrast | High. Test mentally against both light and dark YouTube chrome. Low-contrast greys disappear in the feed. |
+| Size | `1536x1024` or `1920x1088` → deliver ~1280×720 |
+| Layout | Recipe A–D landscape split |
+| Safe | Centre/left ~70%; **empty bottom-right** for duration badge |
+| Text | 2–4 words hero |
 
-### YouTube Shorts / TikTok / Reels / Stories (9:16)
+### Shorts / Reels / TikTok / Stories (9:16)
 
 | Spec | Guidance |
 |------|----------|
-| Canvas | `1024x1536` or `1080x1920`-class portrait size via gpt-image-2's free-size rules (edges multiples of 16). |
-| Dual crop | Profile grids crop to roughly the **centre square / 4:5**. Put the hook subject + text in the **centre band**; treat extreme top/bottom as background-only. |
-| UI overlays | Same discipline as the video itself ([multi-format-layout.md](multi-format-layout.md)): keep critical content out of top ~200px, bottom ~340px, and the right ~120px like/share rail when the poster will also be used as an in-app cover. |
-| Text | Even shorter than YouTube long-form when possible (2–4 words). Vertical covers are scanned as icons in a grid. |
-| Focal point | Large, centred, simple. A busy full-UI mock will turn to mush at grid size. |
+| Size | `1024x1536` class |
+| Layout | Stacked recipe; hero text in **centre** band for 1:1 / 4:5 grid crop |
+| Safe | Avoid top ~200px, bottom ~340px, right ~120px when used as in-app cover |
+| Text | 2–4 words, even larger relative to frame |
 
-### Feed / LinkedIn / square-ish (1:1 or 4:5)
-
-| Spec | Guidance |
-|------|----------|
-| Canvas | `1024x1024` (1:1) or a tall square near `1080x1350` (4:5 - prefer when the platform allows; more feed real estate). |
-| Crop risk | Feeds and link previews may round corners or crop edges - keep the subject **centred**, not edge-anchored. |
-| Text | Short headline + optional tiny brand mark. Avoid paragraph copy. |
-| Tone | Slightly more "card in a feed" than cinematic YouTube - still theme-aligned, not a screenshot of the whole video. |
-
-### Website / landing hero poster (matches the video embed)
+### Feed (1:1 / 4:5)
 
 | Spec | Guidance |
 |------|----------|
-| Canvas | Match the video's aspect (usually 16:9 at `1536x1024`+). |
-| Role | HTML `poster` attribute / og preview - should look like a polished first frame of the *brand*, not a clickbait thumbnail. |
-| Text | Optional. Often stronger with **no** big clickbait words if the page already has a headline beside the player - avoid duplicating the page H1. |
-| Detail | Can afford slightly richer UI detail than a YouTube sidebar thumb, but still one clear focal idea. |
+| Size | `1024x1024` or ~`1080x1350` |
+| Layout | Centred hero text + one anchor; prefer 4:5 when the platform allows |
+| Safe | Keep headline away from rounded-corner crop |
 
-## Theme alignment (non-negotiable)
+### Website / landing `poster`
 
-The poster must feel like the same production as Gate 4:
+| Spec | Guidance |
+|------|----------|
+| Size | Match video aspect (usually 16:9) |
+| Layout | Same recipes, slightly calmer flare if the page already has an H1 |
+| Text | Still required - short hook that complements page copy, doesn't clone it |
 
-- **Palette** - name the background, primary surface, and one accent from
-  `theme.ts` in the prompt. Don't let the model invent a second brand.
-- **Mood** - match audience/tone from the brief (calm product teaching vs
-  punchy social hook).
-- **Subject** - pull from the video's actual visual language (browser
-  chrome, chart, comparison labels, product surface) so the click isn't
-  bait-and-switch.
-- **Not a collage of every scene** - one idea, same discipline as
-  [design-and-continuity.md](design-and-continuity.md)'s one-focus rule.
+## Prompting gpt-image-2
 
-If Gate 4 used a generated background image, you may reference that file's
-look in the prompt ("same soft navy field and diagonal light as the video
-background") but still generate a **new** poster composition - don't just
-re-export the background.
-
-## What to focus on in the prompt
-
-Write prompts as a **art direction brief**, not a keyword salad. Cover:
-
-1. **Channel + aspect** - "YouTube thumbnail, 16:9, mobile-first, reads at
-   tiny size"
-2. **Single hook** - the one claim/number/contrast from the brief
-3. **Primary subject** - what occupies ~40%+ of the frame
-4. **Theme palette and lighting** - concrete, from `theme.ts`
-5. **Typography intent** - either "no text" (then composite later) or exact
-   short copy in quotes with "huge bold sans-serif, high contrast"
-6. **Safe-zone constraints** - e.g. "keep bottom-right empty for duration
-   badge", "subject centred for profile-grid crop"
-7. **Negatives** - "no watermarks, no fake YouTube UI chrome, no tiny
-   unreadable labels, no cluttered multi-panel dashboard, no extra logos"
+Write an art-direction brief. Lock **headline → recipe → visual anchor →
+theme skin** before calling the model.
 
 ### Prompt skeleton
 
 ```text
-{Channel} poster/thumbnail, {aspect}, designed to read clearly when tiny.
-Theme: {palette + mood from theme.ts}.
-Subject: {one oversized focal idea tied to the video hook}.
-Hook text (optional): "{3-5 words}" in huge bold high-contrast sans-serif,
-placed in the safe zone ({channel-specific}).
-Composition: {centred / split before-after / big number + UI fragment}.
-Avoid: watermarks, platform UI chrome, busy full-screen UI, tiny text,
-clutter, unrelated stock metaphors.
+YouTube-style video thumbnail / poster, {aspect}, mobile-first, must read
+clearly at postage-stamp size.
+NO PEOPLE, no faces, no human figures, no mascots.
+
+LAYOUT RECIPE: {A split text+icon | B two-tone title+UI | C question+process | D number/before-after}.
+TEXT IS THE HERO: largest element, bold heavy sans-serif, high contrast,
+centre/left safe zone, empty bottom-right for duration badge.
+Hero headline (exact): "{2-4 WORDS}".
+Optional eyebrow: "{short}".
+This video is about: {one plain sentence}.
+
+Visual anchor (secondary only): {one oversized icon OR simplified device mock
+OR before/after OR big number support} with sticker/outline pop - never
+busier or larger than the headline.
+Background: {solid/soft gradient/light geometry from theme}.
+Theme styling: {palette + mood from theme.ts}; accent colour on the
+headline key word and one support graphic.
+Creative flare: {one diagonal slash / glow / brush / badge} within theme
+colours.
+Avoid: people, watermarks, fake platform UI, dense screenshots, tiny text,
+clutter, text-free mood images, repeating a long video title, em dashes
+(the character —) in any text - use a spaced hyphen or comma instead.
 ```
 
-### Domain-specific subject choices (this skill)
+### Text strategy
 
-Prefer subjects that match UI/product explainers:
+- **Default:** put the exact hero line in the prompt and state it is the
+  largest element.
+- **No em dashes (—)** in hero text, eyebrows, badges, callouts, or the
+  prompt's quoted copy - rewrite with a spaced hyphen (` - `), comma, or
+  full stop before generating (skill-wide hard rule).
+- **If type is garbled or brand font must be exact:** generate the
+  layout/anchor text-free, then composite the real headline as the dominant
+  layer (Remotion `Poster` or design tool). Never ship without hero text.
+- Prefer fewer, bigger words over a clever longer line.
 
-| Strong | Weak |
-|--------|------|
-| One oversized control/card with a clear state | Full app screenshot at readable desktop density |
-| Before/after split with a single variable labelled | Three unrelated features in one frame |
-| One huge number / metric as the hero | Paragraph of feature bullets |
-| Abstract theme field + one product silhouette | Generic "AI brain / neon network" stock cliché |
-
-Faces and exaggerated emotion convert on many YouTube niches - **only use
-them if the brief/brand actually uses people**. Don't force a stock smiling
-presenter onto a product UI brand that never shows humans.
-
-## Text strategy with gpt-image-2
-
-`gpt-image-2` can render short bold headlines well enough for many posters,
-but exact brand typefaces and pixel-perfect kerning are still unreliable.
-
-- **Default for social/YouTube CTR posters:** put the **3–5 word hook in the
-  image prompt** so the file is self-contained for upload.
-- **If brand type must be exact:** generate a **text-free** thematic visual,
-  then composite the real type in a small Remotion `Poster` composition (or
-  any design tool) and export that as `poster.png`. Say which path you took
-  when presenting at Gate 8.
-- **Never** ask the model for dense UI copy, URLs, long sentences, or tiny
-  labels - those fail the "reads when tiny" test even when spelled right.
-
-## Generation call (poster-specific)
-
-Reuse the same `generateImage` pattern as
-[video-image-generation.md](video-image-generation.md); only the prompt,
-size, and quality choice change:
+### Generation call
 
 ```ts
 import { experimental_generateImage as generateImage } from "ai";
@@ -190,48 +321,48 @@ const model = process.env.AI_GATEWAY_IMAGE_MODEL ?? "openai/gpt-image-2";
 
 const result = await generateImage({
   model,
-  prompt: posterPrompt, // built from the skeleton above
-  size: posterSize,     // e.g. "1536x1024" | "1024x1536" | "1024x1024"
+  prompt: posterPrompt,
+  size: posterSize, // "1536x1024" | "1024x1536" | "1024x1024"
   providerOptions: {
     openai: {
-      quality: "high", // posters are the hero still - prefer high over medium
+      quality: "high",
       background: "opaque",
     },
   },
 });
 
 writeFileSync(
-  `public/video/${slug}/poster-${formatId}.png`, // or poster.png if single format
+  `public/video/${slug}/poster-${formatId}.png`,
   Buffer.from(result.image.base64, "base64"),
 );
 ```
 
-- **Quality:** `high` is appropriate here (the image *is* the hero asset).
-  Use `medium` only for a cheap draft while iterating the prompt with the
-  user; don't ship `low`.
-- **One regenerate max** if text is garbled or the subject missed the brief;
-  then simplify the prompt or switch to text-free + composite. Same cost
-  discipline as other generated assets.
+- Use `high` quality for thumbnails (hero asset). One regenerate max if
+  text/layout misses; then simplify or composite type.
 
 ## Self-check before presenting (Gate 7 → 8)
 
-- [ ] One poster file per approved format, correct aspect for that channel
-- [ ] Theme palette/mood matches `theme.ts` / the video (not a second brand)
-- [ ] Single focal idea tied to the brief's hook
-- [ ] Text ≤ ~5 words (or intentionally text-free) and legible when shrunk
-- [ ] Channel safe zones respected (YouTube duration badge; vertical
-      centre crop; feed centring)
-- [ ] No fake platform chrome, watermarks, or cluttered full-UI dump
-- [ ] Fallback to Remotion still only when AI Gateway is unavailable - and
-      that fallback still picks the strongest moment, not frame 0
+- [ ] Treats poster and thumbnail as the same job (click packaging)
+- [ ] Follows a named layout recipe from this guide (not an ad-hoc collage)
+- [ ] Theme/brand used only as styling - recipe still readable
+- [ ] **No people / faces**
+- [ ] Hero text is the first thing you notice (2-4 words, legible when shrunk)
+- [ ] No em dashes (—) in any on-image text
+- [ ] One visual anchor supports the headline; nothing competes with it
+- [ ] Topic matches `brief.md`; curiosity pairs with the video title
+- [ ] Bottom-right clear (16:9); vertical centre-safe for 9:16 grid crops
+- [ ] One file per approved format
+- [ ] Not a Remotion freeze-frame unless AI Gateway unavailable
 
 ## Relationship to other references
 
-- Call setup / sizes / quality tiers:
+- Call setup / sizes / quality:
   [video-image-generation.md](video-image-generation.md)
-- Format safe zones inside the *video*:
+- Video safe zones (in-timeline, not thumbnail):
   [multi-format-layout.md](multi-format-layout.md)
 - Export expectations:
   [production-quality-guidelines.md](production-quality-guidelines.md)
-- Theme continuity:
+- Contrast content shape (feeds Recipe D):
+  [content-formula.md](content-formula.md)
+- Theme continuity in the video itself:
   [design-and-continuity.md](design-and-continuity.md)
