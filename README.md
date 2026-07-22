@@ -48,25 +48,53 @@ See [`.skills/creating-skills/SKILL.md`](.skills/creating-skills/SKILL.md) for h
 
 ## Skills
 
+Each skill below can be installed on its own — copy its command and run it in the target project.
+
 ### UI
 
-| Skill | Description |
-|---|---|
-| [ui-laws-audit](.skills/ui-laws-audit/) | Audit a page/route/component against research-backed UX laws, Web Interface Guidelines, and design distinctiveness (catches generic/"AI slop" aesthetics); scored report with blocking/major/minor issues and fixes. |
-| [ui-responsive-layout-audit](.skills/ui-responsive-layout-audit/) | Audit pages against responsive-design practice — breakpoints, mobile vs. collapsible content, touch targets — with a severity-ranked report. |
-| [documenting-components](.skills/documenting-components/) | Write or update a component's contract doc as a Markdown file next to its source (`button.tsx` + `button.md`) — purpose, props/events API, behaviour, accessibility, states, variants, and usage examples, all derived from the actual code. |
+#### [ui-laws-audit](.skills/ui-laws-audit/)
+
+Audit a page/route/component against research-backed UX laws, Web Interface Guidelines, and design distinctiveness (catches generic/"AI slop" aesthetics); scored report with blocking/major/minor issues and fixes.
+
+```sh
+npx dot-skills add levi-putna/skills/ui-laws-audit
+```
+
+#### [ui-responsive-layout-audit](.skills/ui-responsive-layout-audit/)
+
+Audit pages against responsive-design practice — breakpoints, mobile vs. collapsible content, touch targets — with a severity-ranked report.
+
+```sh
+npx dot-skills add levi-putna/skills/ui-responsive-layout-audit
+```
+
+#### [documenting-components](.skills/documenting-components/)
+
+Write or update a component's contract doc as a Markdown file next to its source (`button.tsx` + `button.md`) — purpose, props/events API, behaviour, accessibility, states, variants, and usage examples, all derived from the actual code.
+
+```sh
+npx dot-skills add levi-putna/skills/documenting-components
+```
 
 ### SEO
 
-| Skill | Description |
-|---|---|
-| [seo](.skills/seo/) | Review or fix on-page/technical SEO — metadata, canonical URLs, structured data, sitemap/robots, headings, alt text — reusing the project's existing helpers. |
+#### [seo](.skills/seo/)
+
+Review or fix on-page/technical SEO — metadata, canonical URLs, structured data, sitemap/robots, headings, alt text — reusing the project's existing helpers.
+
+```sh
+npx dot-skills add levi-putna/skills/seo
+```
 
 ### Video
 
-| Skill | Description |
-|---|---|
-| [video-remotion](.skills/video-remotion/) | End-to-end pipeline for a narrated, multi-scene explainer video built with Remotion: audio-first script → scene plan → shared theme/components → ElevenLabs narration with timestamp sync → scene components → single deterministic render. Gate-by-gate approval workflow. |
+#### [video-remotion](.skills/video-remotion/)
+
+End-to-end pipeline for a narrated, multi-scene explainer video built with Remotion: audio-first script → scene plan → shared theme/components → ElevenLabs narration with timestamp sync → scene components → single deterministic render. Gate-by-gate approval workflow.
+
+```sh
+npx dot-skills add levi-putna/skills/video-remotion
+```
 
 ## License
 
