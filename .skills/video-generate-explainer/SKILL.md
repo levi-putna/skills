@@ -1,30 +1,38 @@
 ---
 name: video-generate-explainer
 id: 90ae116e-4348-4c1a-b646-308b70c522b7
-version: 2.2.0
+version: 2.3.0
 author: Levi Putna
 repo: https://github.com/levi-putna/skills
 description: >-
-  End-to-end pipeline for producing a short (under 20 seconds), narrated
-  explainer/example video with Remotion inside a Next.js project, built
-  around UI/product-style visuals: an upfront planning-brief gate (topic,
-  theme, length, target platform(s), and aspect ratio/format(s) - Remotion
-  can target more than one format from a single production) → audio-first
-  script → scene plan (flagging any scene that could use generated or real
-  video) → shared theme/components (reusing/promoting from a
-  cross-production component library, with video-specific guidance for
-  charts/data viz and UI/UX rendering) + background strategy → ElevenLabs
-  narration with timestamp alignment → build each scene as a Remotion
-  component, a Veo-generated clip, or (rarely) a user-supplied real clip for
-  an intro/outro → assemble with Series/TransitionSeries timed exactly to
-  the narration → one deterministic render per format → an automated critic
-  pass on brief fit, UI/animation clarity, and script delivery before
-  sign-off. Use when asked to create a short explainer video, product/
-  feature teaser, UI walkthrough clip, marketing example, or demo snippet
-  using Remotion. Do NOT use this skill for realistic/live-action video
-  productions, long-form narrated walkthroughs, or anything where the
-  primary visual is real camera footage rather than UI/code-driven graphics -
-  those are a different problem this skill does not solve.
+  End-to-end pipeline for producing a narrated explainer/example video with
+  Remotion inside a Next.js project, built around UI/product-style visuals.
+  Target length defaults to around 1 minute but is fully flexible - Gate 1
+  sets the real target from the actual content, and the Remotion production
+  itself has no fixed length cap. Any short-clip limit (Veo's fixed
+  4/6/8-second generations) only ever applies to an individual
+  AI-generated video clip used inside the timeline, never to the overall
+  production. Pipeline: an upfront planning-brief gate (topic,
+  theme, target length, target platform(s), and aspect ratio/format(s) -
+  Remotion can target more than one format from a single production) →
+  audio-first script → scene plan (flagging any scene that could use
+  generated or real video) → shared theme/components (reusing/promoting
+  from a cross-production component library, with video-specific guidance
+  for charts/data viz and UI/UX rendering) + background strategy →
+  ElevenLabs narration with timestamp alignment → build each scene as a
+  Remotion component, a short Veo-generated clip, or (rarely) a
+  user-supplied real clip for an intro/outro → assemble with
+  Series/TransitionSeries timed exactly to the narration → one deterministic
+  render per format → an automated critic pass on brief fit, UI/animation
+  clarity, and script delivery before sign-off. Use when asked to create an
+  explainer video, product/feature teaser, UI walkthrough clip, marketing
+  example, or demo snippet using Remotion, whether that's a punchy
+  15-20 second teaser or a multi-minute walkthrough. Do NOT use this skill
+  for realistic/live-action video productions or anything where the primary
+  visual is real camera footage rather than UI/code-driven graphics -
+  screen-recorded tutorials, documentary-style long-form footage, or any
+  production whose primary visual isn't UI/code-driven graphics are a
+  different problem this skill does not solve.
 dependencies:
   - type: env
     name: ELEVENLABS_API_KEY
@@ -75,13 +83,16 @@ dependencies:
 
 # Video: Generate Explainer
 
-Produce a short, narrated explainer/example video with
+Produce a narrated explainer/example video with
 [Remotion](https://www.remotion.dev) (React components rendered to video)
 inside a Next.js project, with **user approval at every gate**. This is for
 **UI/product-style** videos - feature teasers, "how it works" clips,
-marketing examples, tiny demo snippets - not for realistic/live-action
-productions. If the ask is fundamentally a real-camera video (an interview, a
-testimonial, b-roll editing), this is the wrong skill.
+marketing examples, demo snippets, fuller product walkthroughs - not for
+realistic/live-action productions. If the ask is fundamentally a real-camera
+video (an interview, a testimonial, b-roll editing), this is the wrong
+skill. Length is not what determines fit here: a 15-second teaser and a
+5-minute walkthrough both belong in this skill as long as the visuals are
+UI/code-driven rather than real camera footage.
 
 This is the code-native sibling of a storyboard/AI-video pipeline: instead of
 prompting a generative video model for every shot, you **write most scenes
@@ -108,17 +119,39 @@ assuming the old mental model:
    obeys the prompt this time" loop. Generated-video scenes don't get this
    for free - each generation costs money and takes minutes, so they're used
    sparingly and only after explicit approval (Gate 3).
-4. **A critic pass closes the loop.** Because this format is short and
-   dense, a final automated review (Gate 8) checks the finished video
-   against the brief, UI/animation clarity, and script delivery before it's
-   ever presented as done - see
+4. **A critic pass closes the loop.** Because every scene is dense with a
+   specific job to do, a final automated review (Gate 8) checks the finished
+   video against the brief, UI/animation clarity, and script delivery before
+   it's ever presented as done - see
    [references/critic-review.md](references/critic-review.md).
 
-Defaults: **target length is under 20 seconds, hard cap.** This is a short,
-punchy format - closer to a social/product-teaser clip than a walkthrough.
-If the user's request implies more content than fits in 20 seconds, say so
-at Gate 1 and negotiate scope down (cut to the single strongest idea) rather
-than quietly producing a longer video. **Aspect ratio(s) are decided at
+Defaults: **target length defaults to around 1 minute, but there is no
+fixed cap on the overall Remotion production.** Gate 1 sets the real target
+from the actual content rather than forcing everything into one bucket - a
+single punchy feature teaser might land at 15-20 seconds, a fuller
+walkthrough with several distinct points might genuinely need several
+minutes. If the discussed content clearly implies something shorter or
+longer than the 1-minute default, say so explicitly at Gate 1 and set that
+as the real target - don't quietly force-fit content into the default, and
+don't quietly let a video balloon past what was agreed either. **If the
+resulting target is likely to run past 5 minutes, flag it plainly at
+Gate 1**: more narration means more characters sent to ElevenLabs per
+synthesis call, which draws down more of the account's audio-generation
+credits/quota - this is a cost heads-up for the user to confirm, not a
+reason to cut content that genuinely needs the length.
+
+**A "short clip" limit (e.g. Veo's fixed 4/6/8-second generations) only
+ever describes a single `generated-video` scene, never the production as a
+whole.** The overall Remotion production's runtime is driven purely by the
+approved target length and the narration/scene timings within it - it is
+never capped by, or confused with, the duration of any individual
+AI-generated clip used inside it. If a `generated-video` beat needs to span
+longer than one clip's fixed duration, generate multiple short clips back to
+back for that beat rather than trying to force one long clip - and keep
+preferring a Remotion component over generated video wherever the shot can
+be drawn in code, regardless of how long the overall production is.
+
+**Aspect ratio(s) are decided at
 Gate 1, not assumed.** Default to a single 16:9 composition if the user has
 no specific platform in mind, but Remotion can render **multiple aspect
 ratios from one production** (e.g. a 16:9 for a website and a 9:16 for
@@ -146,9 +179,12 @@ this skill** - Gate 4 defines it per-project.
    ratio. A format-specific layout difference belongs inside a scene's
    component (reading actual dimensions from `useVideoConfig()`), not a
    parallel scene plan.
-5. **Total runtime stays under 20 seconds.** Check this at Gate 3 (planned)
-   and again at Gate 7 (actual, from real timings) - if it's over, cut
-   content, don't let it slide through unaddressed.
+5. **Total runtime matches the brief's approved target length (Gate 1) -
+   there is no fixed cap on the overall production.** Check this at Gate 3
+   (planned) and again at Gate 7 (actual, from real timings). If it's
+   drifted meaningfully from what was approved, tighten/expand the script or
+   go back to Gate 1 and re-confirm the target with the user - don't let it
+   silently drift either direction unaddressed.
 6. **All component-scene animation is driven by `useCurrentFrame()`.** CSS
    transitions/animations and Tailwind animation classes are forbidden - they
    do not render correctly. See [references/remotion-nextjs-setup.md](references/remotion-nextjs-setup.md).
@@ -166,7 +202,12 @@ this skill** - Gate 4 defines it per-project.
 10. **Real/generated video is the exception, not the default.** Prefer a
     Remotion component for anything that can be drawn in code. Generated
     (Veo) or real video may only be used where flagged and approved at
-    Gate 3 - never introduced unilaterally at Gate 6.
+    Gate 3 - never introduced unilaterally at Gate 6. This preference holds
+    regardless of the production's overall length - a longer target means
+    more (or longer) component scenes, not a shift toward generated video.
+    Where a `generated-video` beat needs to span longer than one Veo clip's
+    fixed duration, chain multiple clips rather than defaulting to generated
+    video for more of the timeline.
 11. **Mute clip-native audio under the narration by default.** A
     Veo-generated clip or a real user-supplied clip may carry its own audio
     (dialogue, ambience, generated sound). Unless a scene is explicitly a
@@ -191,6 +232,12 @@ this skill** - Gate 4 defines it per-project.
     component into it once a second real production actually needs it -
     never fork a shared component per-production. See
     [references/reusable-components.md](references/reusable-components.md).
+16. **Flag likely audio-generation cost before locking in a long target.**
+    If Gate 1's confirmed (or clearly emerging) target length is likely to
+    exceed 5 minutes, say so explicitly before finalising the brief - more
+    narration means more of the account's ElevenLabs credits/quota consumed
+    per synthesis call. This is a heads-up for the user to weigh in on, not
+    a gate that blocks a longer production.
 
 ## Prerequisites
 
@@ -283,7 +330,7 @@ Video production progress:
 - [ ] Gate 4 - Theme + shared components + background
 - [ ] Gate 5 - Narration and audio generation
 - [ ] Gate 6 - Scenes built (components / generated / real video)
-- [ ] Gate 7 - Assemble + render per format (under 20s check)
+- [ ] Gate 7 - Assemble + render per format (target length check)
 - [ ] Gate 8 - Critic review + final sign-off
 ```
 
@@ -340,9 +387,23 @@ approved.
      (e.g. "problem → fix", "feature highlight", "brand moment"). This is
      the *content* theme, not the visual design theme - palette/type/motion
      direction is a separate decision at Gate 4.
-   - **Target length** - confirm the ≤20s default, or negotiate scope down
-     now (cut to the single strongest idea) if the ask clearly implies more
-     content than fits.
+   - **Target length** - ask if the user has a specific length in mind. If
+     not, propose a target based on the actual scope of content just
+     discussed rather than defaulting blindly: a single feature/teaser idea
+     usually fits well under a minute (even down to ~15-20s for an
+     individual `generated-video` beat, see below), while a fuller
+     walkthrough with several distinct points genuinely needs more room.
+     **Default to around 1 minute** only when the content doesn't clearly
+     point to something shorter or longer. There is **no fixed cap** on the
+     overall production's runtime - the goal is a target that actually fits
+     the content, never forcing content into a preset bucket or padding a
+     thin idea out to hit one. **If the resulting target is likely to run
+     past 5 minutes**, say so explicitly now: longer narration means more
+     characters sent to ElevenLabs per synthesis call, which draws down more
+     of the account's audio-generation credits/quota - confirm the user is
+     comfortable with that before locking in the target. Record the agreed
+     number in `brief.md` as `targetLengthSeconds` (or a stated range) -
+     every later gate reads this instead of assuming any fixed default.
    - **Target platform(s)/placement** - where this will be used (a landing
      page hero, a social post, an in-app tour, an ad, etc.). This drives
      both the aspect ratio(s) below and whether it'll typically be watched
@@ -395,16 +456,17 @@ approved.
    than silently drifting from what was approved.
 2. Write `script.md` as an **audio-first VO script**. Read
    [references/audio-first-script.md](references/audio-first-script.md) in
-   full before writing - it covers the tightened pacing/word budget for this
-   short format, the required opening hook, breath points, ElevenLabs
-   `<break>` tag usage, and speakable wording (no code/selectors read aloud).
-   If the brief is naturally a contrast (a timing/spacing/threshold that's
-   easy to get wrong, a before/after, a right-way-vs-wrong-way), read
+   full before writing - it covers the pacing/word-budget math (scaled to
+   the brief's approved target length), the required opening hook, breath
+   points, ElevenLabs `<break>` tag usage, and speakable wording (no code/
+   selectors read aloud). If the brief is naturally a contrast (a timing/
+   spacing/threshold that's easy to get wrong, a before/after, a
+   right-way-vs-wrong-way), read
    [references/content-formula.md](references/content-formula.md) too - it's
    a reusable shape (isolate one variable, show both sides, let a concrete
-   number be the payload) for exactly this kind of explainer, compressed to
-   this skill's ≤20s cap. Not every brief needs it - skip it for a straight
-   feature reveal with nothing to contrast against.
+   number be the payload) for exactly this kind of explainer, sized to fit
+   the brief's approved target length. Not every brief needs it - skip it
+   for a straight feature reveal with nothing to contrast against.
 3. **Read the script aloud yourself** (or silently mouth it) and time it. If
    it sounds like copy on a page, or clearly runs past the brief's target
    length at a natural pace, rewrite/cut until it doesn't.
@@ -438,10 +500,14 @@ approved.
    in the scene table. Call out per flagged scene: why a component won't
    work, the estimated cost/time impact (generated video costs money and
    takes minutes per clip - see [references/video-image-generation.md](references/video-image-generation.md)),
-   and for `real-video`, exactly what file the user needs to provide. **The
-   user must explicitly approve each flagged scene before Gate 6 acts on
-   it** - approving the scene plan as a whole is not sufficient if these
-   weren't individually called out.
+   and for `real-video`, exactly what file the user needs to provide. If a
+   `generated-video` beat needs to span longer than one Veo clip's fixed
+   duration (4/6/8s - see [references/video-image-generation.md](references/video-image-generation.md)),
+   plan **multiple clips end-to-end** for that beat rather than one
+   artificially stretched clip, and fold the extra generation(s) into the
+   cost/time call-out. **The user must explicitly approve each flagged scene
+   before Gate 6 acts on it** - approving the scene plan as a whole is not
+   sufficient if these weren't individually called out.
 5. Write `scenes.json`. Per scene:
 
    ```json
@@ -499,8 +565,9 @@ approved.
    }
    ```
 
-   Top-level fields: `slug`, `title`, `fps`, `targetDurationSeconds` (≤20),
-   and `formats` - carried over verbatim from the approved
+   Top-level fields: `slug`, `title`, `fps`, `targetDurationSeconds`
+   (carried from the brief's approved target length - no fixed cap), and
+   `formats` - carried over verbatim from the approved
    `productions/{slug}/brief.md`, e.g.:
 
    ```json
@@ -527,8 +594,9 @@ approved.
 7. Apply the **one idea, one focus** discipline from
    [references/design-and-continuity.md](references/design-and-continuity.md):
    `keyPoint` must be nameable in about a second. Split a scene if it's
-   carrying two ideas - but remember the 20s cap; splitting must not push
-   the total over budget, cut elsewhere if it would.
+   carrying two ideas - but remember the brief's approved target length;
+   splitting must not push the total meaningfully over that budget, so cut
+   elsewhere (or revisit the target with the user) if it would.
    If Gate 2 used the comparison formula, carry its on-screen label system
    (chapter/state pill, two-tone headline, optional mechanism caption - see
    [references/content-formula.md](references/content-formula.md)) into
@@ -536,8 +604,9 @@ approved.
    value for every variant shown, not just the correct one.
 8. Sum the planned scene lengths (narration-derived estimate for component
    scenes, `durationSeconds` for video scenes) and confirm the total is
-   **under 20 seconds**. If not, cut a scene or tighten the script now,
-   before Gate 4/5/6 work is built on top of it.
+   **close to the brief's approved `targetLengthSeconds`**. If it's drifted
+   meaningfully in either direction, cut/add a scene or tighten the script
+   now, before Gate 4/5/6 work is built on top of it.
 9. **Present the scene table** (id, visualType, title, keyPoint, one-line
    narration excerpt) **and the flagged real/generated-video call-outs from
    step 4 separately, requiring explicit approval**. **End with the gate
@@ -646,13 +715,15 @@ Read it before this gate; it is not optional prep.
    two narrated scenes, its duration is just the clip length, not derived
    from any alignment.
 4. **Recompute the total runtime** (sum of all scene durations, minus
-   transition overlaps) and confirm it's still under 20 seconds now that
-   real timings exist, not just the Gate 3 estimate. If it's over, cut here
-   before building scenes in Gate 6.
+   transition overlaps) and confirm it's still close to the brief's
+   approved `targetLengthSeconds` now that real timings exist, not just the
+   Gate 3 estimate. If it's drifted meaningfully, tighten/cut here before
+   building scenes in Gate 6 - or, if the content genuinely needs the extra
+   room, revisit the target with the user rather than force-cutting.
 5. If the user asked for captions, generate the `Caption[]` array from the
    same alignment now (see the reference doc) and save it to
    `productions/{slug}/captions.ts`. Prefer defaulting to **on** for this
-   short format even if not explicitly requested - see
+   format even if not explicitly requested - see
    [references/production-quality-guidelines.md](references/production-quality-guidelines.md)
    for why - but confirm with the user rather than silently deciding.
 6. **Listen to the narration** (or check word timing sanity from the
@@ -793,10 +864,12 @@ you're presenting. Wait.**
    If only one format was approved, this collapses to the single
    `id="{slug}"` composition as before - don't add format suffixing for a
    single-format production.
-3. **Hard-check total runtime is under 20 seconds** (`durationInFrames / fps`)
-   - this is the same number for every format, so check it once. If it
-   isn't under 20s, stop - go back to Gate 2/3 to cut content rather than
-   shipping an over-length render.
+3. **Check total runtime against the brief's approved `targetLengthSeconds`**
+   (`durationInFrames / fps`) - this is the same number for every format, so
+   check it once. There is no fixed cap; if it's drifted meaningfully from
+   what was approved, stop - go back to Gate 2/3 to tighten/expand content,
+   or back to Gate 1 to re-confirm the target with the user, rather than
+   shipping something that silently doesn't match the brief.
 4. Render **every** approved format:
 
    ```bash
@@ -824,8 +897,9 @@ running this gate.
 1. Review the actual rendered `final.mp4` (the primary format if more than
    one was rendered - plus the approved brief/script/scene plan) against
    three axes: **brief fit** (does it match what was approved at
-   Gates 1-3, including the ≤20s cap and the platform(s)/format(s)
-   confirmed in `brief.md`), **UI & animation clarity** (per the
+   Gates 1-3, including the approved `targetLengthSeconds` and the
+   platform(s)/format(s) confirmed in `brief.md`), **UI & animation
+   clarity** (per the
    design-and-continuity checklist, applied to the whole video, not just
    individual stills), and **script delivery professionalism** (does the
    narration read as a competent, well-paced professional VO, not rushed or
@@ -885,7 +959,18 @@ same as any other gate, just scoped to the one thing that changed.
 - Assume a single aspect ratio without asking - Remotion can target more
   than one from a single production, so silently picking one forecloses
   that option without the user ever being asked.
-- Ship a video over 20 seconds - cut content instead.
+- Apply the ~1-minute default without reasoning about it - Gate 1 should
+  size the target from the actual content discussed, not apply the default
+  blindly regardless of scope.
+- Ship a video whose runtime drifts meaningfully from the brief's approved
+  `targetLengthSeconds` without flagging it - if the content genuinely grew
+  or shrank, update the target at Gate 1 rather than letting it silently
+  drift either direction.
+- Stretch a single `generated-video` clip artificially long, or lean on
+  generated video for more of the timeline just because the overall
+  production is longer - chain multiple fixed-duration Veo clips for a
+  longer beat, and keep preferring Remotion components regardless of the
+  production's overall length.
 - Call ElevenLabs once per scene - it must be one synthesis call for the
   full body script, so cadence flows naturally across scene boundaries.
 - Introduce a `generated-video` or `real-video` scene that wasn't explicitly
@@ -935,7 +1020,7 @@ same as any other gate, just scoped to the one thing that changed.
 
 ## Additional resources
 
-- Script pacing, hook discipline, and speakable wording for a ≤20s format: [references/audio-first-script.md](references/audio-first-script.md)
+- Script pacing, hook discipline, and speakable wording (word budget scales with the approved target length): [references/audio-first-script.md](references/audio-first-script.md)
 - Comparison content formula (isolate one variable, label both sides, borrowed motion values) for contrast-driven briefs: [references/content-formula.md](references/content-formula.md)
 - Continuity, relevance, hierarchy, UI-layout-realism checklist: [references/design-and-continuity.md](references/design-and-continuity.md)
 - ElevenLabs timestamped synthesis, scene-timing math, captions: [references/elevenlabs-narration-sync.md](references/elevenlabs-narration-sync.md)

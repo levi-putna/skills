@@ -12,7 +12,13 @@ video-image-generation.md and step 3 below).
 Concatenate every scene's non-empty `narration` field (space-joined, in the
 order they appear in `scenes.json`, skipping wordless video scenes) into a
 single string - this must equal the approved body script from Gate 2. Call
-the timestamped synthesis endpoint **once** with that full string:
+the timestamped synthesis endpoint **once** with that full string. Longer
+scripts consume more of the ElevenLabs account's audio-generation
+credits/quota per call (cost scales with character count) - this should
+already have been flagged to the user at Gate 1 if `targetLengthSeconds`
+was likely to exceed 5 minutes, so this call itself needs no extra
+confirmation, just the awareness that it's the point the cost is actually
+incurred:
 
 ```
 POST https://api.elevenlabs.io/v1/text-to-speech/{ELEVENLABS_VOICE_ID}/with-timestamps
@@ -132,10 +138,12 @@ overlap is subtracted from total duration). If a scene's narration is very
 short, either lengthen the copy at Gate 2/3 or shorten its transition.
 
 **Then re-sum the whole timeline** (every scene's `durationInFrames`, minus
-transition overlaps) and confirm it's still under the 20-second cap now
-that real numbers exist - the Gate 3 estimate was necessarily approximate.
-If it's over, cut a scene or tighten wording now, before Gate 6 builds
-anything on top of these numbers.
+transition overlaps) and confirm it's still close to the brief's approved
+`targetLengthSeconds` now that real numbers exist - the Gate 3 estimate was
+necessarily approximate. There is no fixed cap; if it's drifted
+meaningfully from the approved target, cut/tighten (or expand) a scene now,
+before Gate 6 builds anything on top of these numbers, or revisit the
+target with the user if the content genuinely needs the difference.
 
 ## 4. Optional: captions from the same alignment
 

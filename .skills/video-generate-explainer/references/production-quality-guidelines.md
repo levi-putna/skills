@@ -8,20 +8,23 @@ than silently skipping one.
 
 ## The first 1-2 seconds are the hook
 
-At under 20 seconds total, there is no slow build-up budget. Whatever the
-first scene shows must be legible and interesting on frame one - not a
-blank canvas that fades something in over a second, not a logo-only cold
-open with nothing else happening, unless the brief is specifically a
-logo/brand sting. Check this concretely at Gate 8 ("brief fit"): would
-someone scrolling past stop on frame one?
+Regardless of the approved target length, whatever the first scene shows
+must be legible and interesting on frame one - not a blank canvas that
+fades something in over a second, not a logo-only cold open with nothing
+else happening, unless the brief is specifically a logo/brand sting. A
+short target (well under a minute) has essentially no slow-build-up budget
+at all; a longer target can ease into more context immediately *after* the
+hook lands, but the hook itself still has to work on frame one - extra
+runtime is not licence to open slow. Check this concretely at Gate 8
+("brief fit"): would someone scrolling past stop on frame one?
 
 ## Captions, by default
 
-Short-form video like this is very often watched muted (social feeds,
-autoplay previews, embedded on a page next to other content). Default to
-**on** for burned-in captions using the `@remotion/captions` pipeline this
-skill already supports (Gate 5, step 5) unless the user explicitly says
-otherwise. Don't add this silently, though - confirm it at Gate 5 the same
+Product/explainer video like this is very often watched muted (social
+feeds, autoplay previews, embedded on a page next to other content),
+regardless of length. Default to **on** for burned-in captions using the
+`@remotion/captions` pipeline this skill already supports (Gate 5, step 5)
+unless the user explicitly says otherwise. Don't add this silently, though - confirm it at Gate 5 the same
 way you'd confirm anything else, since it does add a visual layer the user
 might not want for every project (e.g. a purely ambient/brand piece with no
 literal narration to caption).

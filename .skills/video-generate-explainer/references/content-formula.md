@@ -5,9 +5,12 @@ naturally a contrast - right vs. wrong, before vs. after, too-little vs.
 too-much. Distilled from studying published short-form UI/UX pattern videos
 (e.g. designmotionhq's "Animation Timing," "Card Hover Anatomy," "Dropdown
 Design" breakdowns - same 9:16 comparison-driven format that runs on
-Instagram and their site). Those run 45-60s across 4-6 chapters; this skill
-caps at 20s, so the job here is compressing the same *shape* into a single
-beat, not importing their runtime.
+Instagram and their site). Those run 45-60s across 4-6 chapters - close to
+this skill's own ~1-minute default, so at that length the shape maps over
+fairly directly (a chapter per contrast). At a shorter approved target the
+job is compressing the same *shape* into one or two beats; at a longer
+approved target there's room to actually run several distinct
+chapters/contrasts, closer to the source material's own structure.
 
 **Use this formula when** the brief is "X is subtle/easy to get wrong" -
 timing, spacing, a threshold, an easing choice, a state that's easy to skip.
@@ -42,12 +45,16 @@ that's just introducing something new.
    and should usually be spoken in the narration too, not invented
    separately for the on-screen label.
 
-## Anatomy of a beat, compressed to ≤20s
+## Anatomy of a beat, sized to the approved target length
 
 The source material spends a full chapter (5-10s) on scene-setting before
-the payoff. This skill's format doesn't have that budget - collapse a
-chapter to roughly this shape inside one scene, or across two adjacent
-scenes if the contrast genuinely needs a beat each:
+the payoff. A short approved target (well under a minute) usually doesn't
+have that budget - collapse a chapter to roughly this shape inside one
+scene, or across two adjacent scenes if the contrast genuinely needs a beat
+each. A ~1-minute or longer target can afford a fuller chapter (a beat of
+scene-setting, then the contrast) closer to the source material's own
+pacing - use judgement based on what was actually agreed at Gate 1 rather
+than compressing just because the format is capable of it:
 
 1. **Cold open on the contrast itself** (frame one, per
    [production-quality-guidelines.md](production-quality-guidelines.md)'s
@@ -102,10 +109,12 @@ a literal hex - same discipline as every other themed value in
 Several patterns reviewed end their positive rules with one dedicated
 "here's the mistake to avoid" beat before landing (e.g. Card Hover
 Anatomy's closing rule: "never scale the whole card - it shifts
-neighbours"). At 20s this usually can't be its own scene, but it's worth
-one closing sentence + a quick negative-state flash in the last scene when
-the topic has an obvious, common mistake - it gives the closing line
-somewhere to land besides just repeating the "correct" state.
+neighbours"). At a short approved target this usually can't be its own
+scene, but it's worth one closing sentence + a quick negative-state flash in
+the last scene when the topic has an obvious, common mistake - it gives the
+closing line somewhere to land besides just repeating the "correct" state.
+At a longer approved target, this can be promoted to its own brief closing
+beat/scene instead of being folded into the last one.
 
 ## Motion values worth borrowing
 
@@ -125,7 +134,7 @@ target when tuning a `spring()` config:
 | Hover lift | ~8px translate + shadow grows with it, ~200ms ease-out | Card/button hover - move the shadow together with the element, not independently |
 | Image "push" on hover | Scale contents ~1.05 inside an `overflow: hidden` frame; never scale the outer container | Keeps layout geometry fixed - the container never resizes or shifts a neighbour |
 
-## Worked example (single ≤20s beat)
+## Worked example (single short beat)
 
 Brief: "Explain why our dropdown opens upward near the bottom of the
 screen." One variable (menu direction), one contrast (clips off-screen vs.

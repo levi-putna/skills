@@ -5,10 +5,14 @@ for the ear: a real person explaining something, with natural flow and human
 pacing. On-screen text/captions are a secondary layer added later - never
 write the script as if it were the on-screen copy.
 
-**This skill's format is capped at 20 seconds total.** That's roughly
-40-50 spoken words of body VO at a natural pace (see the word-budget math
-below) - there is no room for a slow wind-up. The opening line has to work
-as the hook itself, not lead into one a few seconds later.
+**Word budget and beat count scale with the brief's approved
+`targetLengthSeconds` (Gate 1) - there is no fixed cap.** A short target
+(15-20s) has roughly 40-50 spoken words of body VO and no room for a slow
+wind-up; a ~1-minute target has room for ~130-150 words and a few more
+beats; a multi-minute target has room for real scene-setting and several
+distinct sections. Whatever the length, the opening line still has to work
+as the hook itself - a longer runtime buys more room *after* the hook, not
+permission to lead into one a few seconds later.
 
 ## What "natural" means here
 
@@ -22,36 +26,57 @@ as the hook itself, not lead into one a few seconds later.
 
 ## Flow and pace
 
-At ≤20 seconds, most explainer shapes compress to three or four beats, not
-six - pick the ones that carry the single idea this video is for, don't
-force every beat below into a piece this short:
+The number of beats a script can afford scales with the approved target
+length - pick the shape that fits `targetLengthSeconds`, don't force a
+15-second shape into a 3-minute brief or pad a thin idea out to fill one:
+
+- **Short target (roughly ≤30s)**: three or four beats, no more. Compress
+  to the single idea this video is for.
+- **Around the ~1-minute default**: five to seven beats - room for a short
+  context/problem beat before the payoff, and a slightly fuller landing,
+  but still one throughline, not a list of unrelated points.
+- **Multi-minute target**: organise into a small number of clearly-labelled
+  sections (each with its own mini hook → show it → land arc), rather than
+  one long undifferentiated ramble. Chapter/section labels on screen (see
+  [content-formula.md](content-formula.md)'s label system for one way to do
+  this) help a viewer track where they are.
+
+Whatever the length, the shape itself stays:
 
 1. **Hook** - the opening line itself must establish why this matters and
-   grab attention on frame one. There's no separate "lead-in" before it.
-2. **Show it** - the problem, the feature, or the fix, whichever single
-   idea this video exists to land. Concrete, visual, short sentences.
-3. **Contrast or confirmation** (optional, only if it fits in budget) - a
-   brief beat that sharpens the point (before→after, or a one-line "why it
-   matters").
-4. **Land** - one short closing line. No multi-point takeaway list at this
-   length - if there's more than one point, this is a sign the brief needs
-   to be narrowed (revisit the Gate 1 scope), not that the script needs to
-   talk faster.
+   grab attention on frame one. There's no separate "lead-in" before it,
+   regardless of overall length.
+2. **Show it** - the problem, the feature, or the fix. For a short target
+   this is one beat; for a longer target this can be several beats/sections
+   covering distinct points, provided they still serve one throughline.
+3. **Contrast or confirmation** (optional) - a beat (or, at longer lengths,
+   more than one) that sharpens the point (before→after, or a "why it
+   matters" aside).
+4. **Land** - a closing line/beat. A short target has room for exactly one
+   closing line; a longer target can afford a brief recap of the key
+   points before the final line. If a short-target script wants a
+   multi-point takeaway list, that's a sign the brief needs to be narrowed
+   (revisit the Gate 1 scope) rather than talking faster to cram it in.
 
 Pace like speech, not typesetting:
 
 - Prefer **punctuation and sentence rhythm** for most pauses (commas, full
   stops, em-dashes).
-- Use ElevenLabs `<break time="0.3s" />` / `0.5s` **sparingly** - at most
-  once or twice in a script this short (e.g. after the hook, before the
-  final line). A 20-second video has no room for the 3 breaks a longer
-  script might use; every fraction of a second of silence is a real
-  proportion of the total runtime here.
+- Use ElevenLabs `<break time="0.3s" />` / `0.5s` deliberately, scaled to
+  length - as a rough feel, roughly one natural breath point every 10-15
+  seconds of runtime (after the hook, between beats/sections, before the
+  final line) rather than a fixed count. A short script (≤20s) has room for
+  at most one or two; every fraction of a second of silence is a much
+  bigger proportion of the total runtime there than in a longer piece.
 - Vary rhythm: mix a punchy line with a slightly longer one. Don't write
   every sentence the same length.
-- Aim ~130-150 spoken words per minute. For a 20s video that's roughly
-  **40-50 words of body VO** - treat this as a hard budget, not a
-  suggestion; count words before presenting the script at Gate 2.
+- Aim ~130-150 spoken words per minute. Compute the body-VO word budget from
+  the approved target: roughly `targetLengthSeconds / 60 * 140` words (e.g.
+  ~40-50 words for a 20s target, ~130-150 for a 1-minute target, ~400-450
+  for a 3-minute target). Treat this as a real budget, not a suggestion -
+  count words before presenting the script at Gate 2, and leave a little
+  headroom for breath-point pauses rather than spending literally every
+  second on speech.
 
 ## Speakable wording (ElevenLabs-friendly)
 
@@ -84,10 +109,14 @@ rest of the production - don't drift tone scene to scene.
 - [ ] The opening line works as the hook itself - no lead-in before it
 - [ ] The shape (hook → show it → contrast/land, or whatever fits this
       content) is clear by ear alone
-- [ ] Has breathing room (punctuation and/or a break tag or two, not more)
+- [ ] Has breathing room scaled to length (punctuation and/or break tags
+      roughly every 10-15s of runtime, not more)
 - [ ] No code/selector/path read-through
-- [ ] **Word count is within the ~40-50 word body-VO budget** for a 20s cap
-      (scale down proportionally if the user agreed to a shorter target)
-- [ ] Carries exactly one idea - if it needs a multi-point takeaway, the
-      brief is too big for this format; narrow it instead of rushing it
+- [ ] **Word count matches the approved `targetLengthSeconds`** at
+      ~130-150 wpm (roughly `targetLengthSeconds / 60 * 140` words) - don't
+      assume the 20s-era 40-50 word figure applies unless that's actually
+      the approved target
+- [ ] Carries one clear throughline - a short target with a multi-point
+      takeaway is a sign the brief is too big for that length; narrow the
+      scope or revisit the target with the user instead of rushing it
 - [ ] Tone is consistent with what was confirmed with the user

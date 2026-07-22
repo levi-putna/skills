@@ -19,20 +19,24 @@ concretely isn't doing the job.
 - Does the finished video actually deliver what was confirmed at Gate 1
   (`brief.md` - topic, theme/angle, length, platform(s), audience/tone) and
   written/approved at Gates 2-3 (script, scene plan, key points per scene)?
-- Is the total runtime **under 20 seconds**? Measure it from the actual
-  rendered file, not the planned `durationInFrames` sum (transitions,
-  rounding, or a last-minute edit can drift it).
+- Does the total runtime **match the brief's approved `targetLengthSeconds`**
+  (within a reasonable margin - a few seconds of drift from
+  transitions/rounding is normal, a meaningful drift isn't)? Measure it from
+  the actual rendered file, not the planned `durationInFrames` sum. There is
+  no fixed cap on the production itself - the check is against the approved
+  target, whatever that target is.
 - Was every format confirmed in `brief.md` actually rendered, at the right
   dimensions?
 - Does every approved `generated-video`/`real-video` scene look like what
   was approved (right subject, right mood) - not a wrong tangent that
-  happened to render successfully?
+  happened to render successfully? If a beat used multiple chained clips to
+  cover a longer span, do they cut together cleanly (no visible seam/repeat)?
 - Is the opening 1-2 seconds an actual hook (see
   production-quality-guidelines.md) rather than a slow, contentless wind-up?
 
-**Fail this axis** if the runtime is over 20s, if a scene's content doesn't
-match what was approved, or if the video doesn't land the core idea the
-brief asked for.
+**Fail this axis** if the runtime has drifted meaningfully from the
+approved `targetLengthSeconds`, if a scene's content doesn't match what was
+approved, or if the video doesn't land the core idea the brief asked for.
 
 ### 2. UI & animation clarity
 
